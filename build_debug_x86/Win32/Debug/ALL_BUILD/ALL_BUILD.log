@@ -1,0 +1,10 @@
+﻿Build started 27/01/2015 22:17:48.
+     1>Project "L:\OpenGL\Projet\build_debug_x86\ALL_BUILD.vcxproj" on node 3 (Build target(s)).
+     1>CustomBuild:
+         Building Custom Rule L:/OpenGL/Projet/CMakeLists.txt
+         CMake does not need to re-run because L:\OpenGL\Projet\build_debug_x86\CMakeFiles\generate.stamp is up-to-date.
+     1>Done Building Project "L:\OpenGL\Projet\build_debug_x86\ALL_BUILD.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.15

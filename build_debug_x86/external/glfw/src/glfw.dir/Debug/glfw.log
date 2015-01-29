@@ -1,0 +1,39 @@
+﻿Build started 27/01/2015 22:17:41.
+     1>Project "L:\OpenGL\Projet\build_debug_x86\external\glfw\src\glfw.vcxproj" on node 2 (Build target(s)).
+     1>CustomBuild:
+         Building Custom Rule L:/OpenGL/Projet/external/glfw/src/CMakeLists.txt
+         CMake does not need to re-run because L:\OpenGL\Projet\build_debug_x86\external\glfw\src\CMakeFiles\generate.stamp is up-to-date.
+       ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /IL:\OpenGL\Projet\build_debug_x86\external\glfw\src /IL:\OpenGL\Projet\external\glfw\src /Zi /nologo /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D _CRT_SECURE_NO_DEPRECATE /D _CRT_SECURE_NO_WARNINGS /D _SCL_SECURE_NO_WARNINGS /D _CRT_NONSTDC_NO_DEPRECATE /D _SECURE_SCL=0 /D _HAS_ITERATOR_DEBUGGING=0 /D __STDC_LIMIT_MACROS /D __STDC_CONSTANT_MACROS /D _UNICODE /D UNICODE /D NOMINMAX /D _GLFW_USE_CONFIG_H /D "CMAKE_INTDIR=\"Debug\"" /D _UNICODE /D UNICODE /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"glfw.dir\Debug\\" /Fd"glfw.dir\Debug\vc120.pdb" /Gd /TC /analyze- /errorReport:prompt L:\OpenGL\Projet\external\glfw\src\context.c L:\OpenGL\Projet\external\glfw\src\init.c L:\OpenGL\Projet\external\glfw\src\input.c L:\OpenGL\Projet\external\glfw\src\monitor.c L:\OpenGL\Projet\external\glfw\src\window.c L:\OpenGL\Projet\external\glfw\src\win32_init.c L:\OpenGL\Projet\external\glfw\src\win32_monitor.c L:\OpenGL\Projet\external\glfw\src\win32_time.c L:\OpenGL\Projet\external\glfw\src\win32_tls.c L:\OpenGL\Projet\external\glfw\src\win32_window.c L:\OpenGL\Projet\external\glfw\src\winmm_joystick.c L:\OpenGL\Projet\external\glfw\src\wgl_context.c
+         context.c
+         init.c
+         input.c
+         monitor.c
+         window.c
+         win32_init.c
+         win32_monitor.c
+         win32_time.c
+         win32_tls.c
+         win32_window.c
+         winmm_joystick.c
+         wgl_context.c
+         Generating Code...
+       Lib:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\Lib.exe /OUT:"L:\OpenGL\Projet\build_debug_x86\lib\Debug\glfw3.lib" /NOLOGO glfw.dir\Debug\context.obj
+         glfw.dir\Debug\init.obj
+         glfw.dir\Debug\input.obj
+         glfw.dir\Debug\monitor.obj
+         glfw.dir\Debug\window.obj
+         glfw.dir\Debug\win32_init.obj
+         glfw.dir\Debug\win32_monitor.obj
+         glfw.dir\Debug\win32_time.obj
+         glfw.dir\Debug\win32_tls.obj
+         glfw.dir\Debug\win32_window.obj
+         glfw.dir\Debug\winmm_joystick.obj
+         glfw.dir\Debug\wgl_context.obj
+         glfw.vcxproj -> L:\OpenGL\Projet\build_debug_x86\lib\Debug\glfw3.lib
+     1>Done Building Project "L:\OpenGL\Projet\build_debug_x86\external\glfw\src\glfw.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:02.33

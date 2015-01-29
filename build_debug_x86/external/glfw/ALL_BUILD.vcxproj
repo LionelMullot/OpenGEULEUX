@@ -1,0 +1,151 @@
+﻿<?xml version="1.0" encoding="Windows-1252"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGUID>{D616EF99-32C0-4B20-B736-116426261CCA}</ProjectGUID>
+    <Keyword>Win32Proj</Keyword>
+    <Platform>Win32</Platform>
+    <ProjectName>ALL_BUILD</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <UseOfMfc>false</UseOfMfc>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+    <PropertyGroup>
+      <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+      <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Midl>
+      <AdditionalIncludeDirectories>L:\OpenGL\Projet\build_debug_x86\external\glfw;L:\OpenGL\Projet\external\glfw;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="L:\OpenGL\Projet\external\glfw\CMakeLists.txt">
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Building Custom Rule L:/OpenGL/Projet/external/glfw/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">setlocal
+"C:\Program Files (x86)\CMake\bin\cmake.exe" -HL:/OpenGL/Projet -BL:/OpenGL/Projet/build_debug_x86 --check-stamp-file L:\OpenGL\Projet\build_debug_x86\external\glfw\CMakeFiles\generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">L:/OpenGL/Projet/external/glfw/CMakeLists.txt;L:\OpenGL\Projet\external\glfw\CMakeLists.txt;C:\Program Files (x86)\CMake\share\cmake-3.1\Modules\FindOpenGL.cmake;C:\Program Files (x86)\CMake\share\cmake-3.1\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files (x86)\CMake\share\cmake-3.1\Modules\FindPackageMessage.cmake;C:\Program Files (x86)\CMake\share\cmake-3.1\Modules\CMakeParseArguments.cmake;C:\Program Files (x86)\CMake\share\cmake-3.1\Modules\FindThreads.cmake;C:\Program Files (x86)\CMake\share\cmake-3.1\Modules\CheckIncludeFiles.cmake;C:\Program Files (x86)\CMake\share\cmake-3.1\Modules\CheckLibraryExists.cmake;C:\Program Files (x86)\CMake\share\cmake-3.1\Modules\CheckSymbolExists.cmake;C:\Program Files (x86)\CMake\share\cmake-3.1\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files (x86)\CMake\share\cmake-3.1\Modules\FindPackageMessage.cmake;C:\Program Files (x86)\CMake\share\cmake-3.1\Modules\CMakeParseArguments.cmake;C:\Program Files (x86)\CMake\share\cmake-3.1\Modules\FindDoxygen.cmake;C:\Program Files (x86)\CMake\share\cmake-3.1\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files (x86)\CMake\share\cmake-3.1\Modules\FindPackageMessage.cmake;C:\Program Files (x86)\CMake\share\cmake-3.1\Modules\CMakeParseArguments.cmake;C:\Program Files (x86)\CMake\share\cmake-3.1\Modules\CMakePackageConfigHelpers.cmake;C:\Program Files (x86)\CMake\share\cmake-3.1\Modules\CMakeParseArguments.cmake;C:\Program Files (x86)\CMake\share\cmake-3.1\Modules\WriteBasicConfigVersionFile.cmake;C:\Program Files (x86)\CMake\share\cmake-3.1\Modules\CMakeParseArguments.cmake;L:\OpenGL\Projet\external\glfw\src\glfw3Config.cmake.in;C:\Program Files (x86)\CMake\share\cmake-3.1\Modules\BasicConfigVersion-SameMajorVersion.cmake.in;L:\OpenGL\Projet\external\glfw\docs\Doxyfile.in;L:\OpenGL\Projet\external\glfw\src\glfw_config.h.in;L:\OpenGL\Projet\external\glfw\src\glfw3.pc.in;L:\OpenGL\Projet\external\glfw\cmake_uninstall.cmake.in;L:\OpenGL\Projet\external\glfw\CMakeLists.txt;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">L:\OpenGL\Projet\build_debug_x86\external\glfw\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="L:/OpenGL/Projet/build_debug_x86/external/glfw/tests/accuracy.vcxproj">
+      <Project>1BA02195-DD42-4209-94FC-B6BCE460D4A6</Project>
+    </ProjectReference>
+    <ProjectReference Include="L:/OpenGL/Projet/build_debug_x86/external/glfw/examples/boing.vcxproj">
+      <Project>1548CD99-9848-4925-81BF-8EAE1E54C279</Project>
+    </ProjectReference>
+    <ProjectReference Include="L:/OpenGL/Projet/build_debug_x86/external/glfw/tests/clipboard.vcxproj">
+      <Project>DA7800C8-364A-4DFC-84EA-4CAA48D97587</Project>
+    </ProjectReference>
+    <ProjectReference Include="L:/OpenGL/Projet/build_debug_x86/external/glfw/tests/cursor.vcxproj">
+      <Project>CF1BFA3E-3634-448A-B62B-A99FF591E4CD</Project>
+    </ProjectReference>
+    <ProjectReference Include="L:/OpenGL/Projet/build_debug_x86/external/glfw/tests/cursoranim.vcxproj">
+      <Project>F4C0CC16-3DC7-465E-90F8-E7D6F45017F6</Project>
+    </ProjectReference>
+    <ProjectReference Include="L:/OpenGL/Projet/build_debug_x86/external/glfw/tests/defaults.vcxproj">
+      <Project>A085DB25-8843-49A5-B3A1-76A62FCAEDA6</Project>
+    </ProjectReference>
+    <ProjectReference Include="L:/OpenGL/Projet/build_debug_x86/external/glfw/tests/empty.vcxproj">
+      <Project>3C5BE2C2-5699-4F1D-B419-49C9C2451767</Project>
+    </ProjectReference>
+    <ProjectReference Include="L:/OpenGL/Projet/build_debug_x86/external/glfw/tests/events.vcxproj">
+      <Project>A38624D0-8631-4156-8F44-E4430C0E38F0</Project>
+    </ProjectReference>
+    <ProjectReference Include="L:/OpenGL/Projet/build_debug_x86/external/glfw/tests/fsaa.vcxproj">
+      <Project>F94BC051-2D27-4EDF-A0F1-F7ACDF6A1928</Project>
+    </ProjectReference>
+    <ProjectReference Include="L:/OpenGL/Projet/build_debug_x86/external/glfw/tests/gamma.vcxproj">
+      <Project>8E539196-C521-434D-A771-44278B1ED8B0</Project>
+    </ProjectReference>
+    <ProjectReference Include="L:/OpenGL/Projet/build_debug_x86/external/glfw/examples/gears.vcxproj">
+      <Project>1412BD1F-0521-4649-85C5-05AB78B4F4C3</Project>
+    </ProjectReference>
+    <ProjectReference Include="L:/OpenGL/Projet/build_debug_x86/external/glfw/src/glfw.vcxproj">
+      <Project>3CB67F4E-ADC6-41C8-8875-61BA4EC133EB</Project>
+    </ProjectReference>
+    <ProjectReference Include="L:/OpenGL/Projet/build_debug_x86/external/glfw/tests/glfwinfo.vcxproj">
+      <Project>B364E658-E9F4-46FC-A0E0-3857701A4456</Project>
+    </ProjectReference>
+    <ProjectReference Include="L:/OpenGL/Projet/build_debug_x86/external/glfw/examples/heightmap.vcxproj">
+      <Project>1E4C9EAC-E60A-46CC-9BE1-7E465B273B87</Project>
+    </ProjectReference>
+    <ProjectReference Include="L:/OpenGL/Projet/build_debug_x86/external/glfw/tests/iconify.vcxproj">
+      <Project>1CADF003-89B5-4D5E-AD4E-0EE5F3160206</Project>
+    </ProjectReference>
+    <ProjectReference Include="L:/OpenGL/Projet/build_debug_x86/external/glfw/tests/joysticks.vcxproj">
+      <Project>DB4E12B6-7A63-49BE-BEEB-41D2357FBC9A</Project>
+    </ProjectReference>
+    <ProjectReference Include="L:/OpenGL/Projet/build_debug_x86/external/glfw/tests/modes.vcxproj">
+      <Project>A5A872F1-4312-40DF-845D-C590F0F8DB06</Project>
+    </ProjectReference>
+    <ProjectReference Include="L:/OpenGL/Projet/build_debug_x86/external/glfw/examples/particles.vcxproj">
+      <Project>DF289618-1B58-4851-BAF0-4AA23D055A36</Project>
+    </ProjectReference>
+    <ProjectReference Include="L:/OpenGL/Projet/build_debug_x86/external/glfw/tests/peter.vcxproj">
+      <Project>9BE91398-BF25-4AD6-B814-FA9623FC94C7</Project>
+    </ProjectReference>
+    <ProjectReference Include="L:/OpenGL/Projet/build_debug_x86/external/glfw/tests/reopen.vcxproj">
+      <Project>8596B48A-A9D1-4795-84CA-9BF5541D72F7</Project>
+    </ProjectReference>
+    <ProjectReference Include="L:/OpenGL/Projet/build_debug_x86/external/glfw/tests/sharing.vcxproj">
+      <Project>DD6E77D1-7CF5-490F-A744-B08282830551</Project>
+    </ProjectReference>
+    <ProjectReference Include="L:/OpenGL/Projet/build_debug_x86/external/glfw/examples/simple.vcxproj">
+      <Project>9411A47F-490F-4F5D-8A83-2498DDBB8C67</Project>
+    </ProjectReference>
+    <ProjectReference Include="L:/OpenGL/Projet/build_debug_x86/external/glfw/examples/splitview.vcxproj">
+      <Project>9EFCF9DE-09DC-4D84-BC7E-DD1055D29D0D</Project>
+    </ProjectReference>
+    <ProjectReference Include="L:/OpenGL/Projet/build_debug_x86/external/glfw/tests/tearing.vcxproj">
+      <Project>98F6D27E-3142-41E3-A358-D1995EEBCC52</Project>
+    </ProjectReference>
+    <ProjectReference Include="L:/OpenGL/Projet/build_debug_x86/external/glfw/tests/threads.vcxproj">
+      <Project>09E9E55A-8CEA-4CAD-A87C-3A21466C046C</Project>
+    </ProjectReference>
+    <ProjectReference Include="L:/OpenGL/Projet/build_debug_x86/external/glfw/tests/title.vcxproj">
+      <Project>205F4E38-41BA-414E-8849-45CAEE9BEBCD</Project>
+    </ProjectReference>
+    <ProjectReference Include="L:/OpenGL/Projet/build_debug_x86/external/glfw/examples/wave.vcxproj">
+      <Project>52275516-4C88-4334-9B91-5541E20DE0C7</Project>
+    </ProjectReference>
+    <ProjectReference Include="L:/OpenGL/Projet/build_debug_x86/external/glfw/tests/windows.vcxproj">
+      <Project>8131E6BF-B16C-48E3-AE41-1B98F260DCF9</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
