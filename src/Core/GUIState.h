@@ -17,11 +17,8 @@ namespace core
 		bool		m_bPanLock;
 		bool		m_bTurnLock;
 		bool		m_bZoomLock;
-		int32_t		m_iLockPositionX;
-		int32_t		m_iLockPositionY;
-		int			m_iCamera;
-		double		m_dTime; 
-		bool		m_bPlaying;
+		double		m_iLockPositionX;
+		double		m_iLockPositionY;
 
 		/* ***************************************************** */
 		/* ************* CONSTUCTION AND DESTUCTION ************ */
@@ -59,12 +56,12 @@ namespace core
 		void setZoomLock(bool b_zoomLock);
 		bool isPanLock(void);
 		void setPanLock(bool b_panLock);
-		int32_t getLockPosition(int i_index);
-		void setLockPosition(int32_t i_positionX, int32_t i_positionY);
+		double getLockPosition(int i_index);
+		void setLockPosition(double i_positionX, double i_positionY);
 
-		static const float get_mouse_pan_speed(){ return 0.001f; }
-		static const float get_mouse_zoom_speed(){ return 0.05f;  }
-		static const float get_mouse_turn_speed(){ return 0.005f;  }
+		static const double get_mouse_pan_speed(){ return 0.001; }
+		static const double get_mouse_zoom_speed(){ return 0.05; }
+		static const double get_mouse_turn_speed(){ return 0.005; }
 		
 	}; // class GUIState
 

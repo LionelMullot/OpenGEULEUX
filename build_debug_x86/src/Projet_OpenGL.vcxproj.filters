@@ -10,6 +10,12 @@
     <ClCompile Include="L:\OpenGL\Projet\src\Utils\Camera.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
+    <ClCompile Include="L:\OpenGL\Projet\src\Utils\Shader.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="L:\OpenGL\Projet\src\Utils\ShaderProgram.cpp">
+      <Filter>Utils</Filter>
+    </ClCompile>
     <ClCompile Include="L:\OpenGL\Projet\src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -22,6 +28,12 @@
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="L:\OpenGL\Projet\src\Utils\Camera.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="L:\OpenGL\Projet\src\Utils\Shader.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="L:\OpenGL\Projet\src\Utils\ShaderProgram.h">
       <Filter>Utils</Filter>
     </ClInclude>
   </ItemGroup>

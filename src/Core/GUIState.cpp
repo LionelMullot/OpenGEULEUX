@@ -23,6 +23,11 @@ namespace core
 	}
 
 	GUIState::GUIState(void)
+		: m_bPanLock(false)
+		, m_bTurnLock(false)
+		, m_bZoomLock(false)
+		, m_iLockPositionX(0)
+		, m_iLockPositionY(0)
 	{}
 
 
@@ -53,7 +58,7 @@ namespace core
 	}
 
 
-	int32_t GUIState::getLockPosition(int i_index)
+	double GUIState::getLockPosition(int32_t i_index)
 	{
 		if (i_index == 0)
 		{
@@ -67,7 +72,7 @@ namespace core
 		return -1;
 	}
 
-	void GUIState::setLockPosition(int32_t i_positionX, int32_t i_positionY)
+	void GUIState::setLockPosition(double i_positionX, double i_positionY)
 	{
 		m_iLockPositionX = i_positionX;
 		m_iLockPositionY = i_positionY;

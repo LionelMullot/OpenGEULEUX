@@ -1,5 +1,5 @@
-﻿Build started 27/01/2015 22:17:41.
-     1>Project "L:\OpenGL\Projet\build_debug_x86\external\glfw\src\glfw.vcxproj" on node 2 (Build target(s)).
+﻿Build started 01/02/2015 14:48:47.
+     1>Project "L:\OpenGL\Projet\build_debug_x86\external\glfw\src\glfw.vcxproj" on node 2 (Rebuild target(s)).
      1>CustomBuild:
          Building Custom Rule L:/OpenGL/Projet/external/glfw/src/CMakeLists.txt
          CMake does not need to re-run because L:\OpenGL\Projet\build_debug_x86\external\glfw\src\CMakeFiles\generate.stamp is up-to-date.
@@ -32,8 +32,8 @@
          glfw.dir\Debug\winmm_joystick.obj
          glfw.dir\Debug\wgl_context.obj
          glfw.vcxproj -> L:\OpenGL\Projet\build_debug_x86\lib\Debug\glfw3.lib
-     1>Done Building Project "L:\OpenGL\Projet\build_debug_x86\external\glfw\src\glfw.vcxproj" (Build target(s)).
+     1>Done Building Project "L:\OpenGL\Projet\build_debug_x86\external\glfw\src\glfw.vcxproj" (Rebuild target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:02.33
+Time Elapsed 00:00:02.89

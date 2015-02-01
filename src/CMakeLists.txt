@@ -30,7 +30,12 @@ source_group( "Core" FILES ${CORE_SRCS} )
 #################################################
 set( UTILS_SRCS
 	 ${CMAKE_CURRENT_SOURCE_DIR}/Utils/Camera.cpp
-	 ${CMAKE_CURRENT_SOURCE_DIR}/Utils/Camera.h )
+	 ${CMAKE_CURRENT_SOURCE_DIR}/Utils/Camera.h
+	 ${CMAKE_CURRENT_SOURCE_DIR}/Utils/Shader.cpp
+	 ${CMAKE_CURRENT_SOURCE_DIR}/Utils/Shader.h
+	 ${CMAKE_CURRENT_SOURCE_DIR}/Utils/ShaderProgram.cpp
+	 ${CMAKE_CURRENT_SOURCE_DIR}/Utils/ShaderProgram.h
+ )
 
 set( SOURCE_FILES ${SOURCE_FILES} ${UTILS_SRCS} )
 

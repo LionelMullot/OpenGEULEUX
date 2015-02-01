@@ -100,9 +100,13 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="L:\OpenGL\Projet\src\Core\App.h" />
     <ClInclude Include="L:\OpenGL\Projet\src\Core\GUIState.h" />
     <ClInclude Include="L:\OpenGL\Projet\src\Utils\Camera.h" />
+    <ClInclude Include="L:\OpenGL\Projet\src\Utils\Shader.h" />
+    <ClInclude Include="L:\OpenGL\Projet\src\Utils\ShaderProgram.h" />
     <ClCompile Include="L:\OpenGL\Projet\src\Core\App.cpp"  />
     <ClCompile Include="L:\OpenGL\Projet\src\Core\GUIState.cpp"  />
     <ClCompile Include="L:\OpenGL\Projet\src\Utils\Camera.cpp"  />
+    <ClCompile Include="L:\OpenGL\Projet\src\Utils\Shader.cpp"  />
+    <ClCompile Include="L:\OpenGL\Projet\src\Utils\ShaderProgram.cpp"  />
     <ClCompile Include="L:\OpenGL\Projet\src\main.cpp"  />
   </ItemGroup>
   <ItemGroup>

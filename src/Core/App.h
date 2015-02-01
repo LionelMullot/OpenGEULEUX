@@ -10,6 +10,7 @@
 namespace utils
 {
 	class Camera;
+	class ShaderProgram;
 }
 
 namespace core
@@ -19,19 +20,15 @@ namespace core
 	// Singleton class
 	class App
 	{
-
-	static const int MAX_NB_SHADERS = 3;
-
+	
 	private:
-		static App *		m_p_instance;
-		double				m_t;
-		double				m_fps;
-		GLFWwindow *		m_pWindow;
-		utils::Camera *		m_pCamera;
-		core::GUIState *	m_pGUIState;
-		GLuint				m_pVertexShadersID[MAX_NB_SHADERS];
-		GLuint				m_pFragmentShadersID[MAX_NB_SHADERS];
-		GLuint				m_programObject;
+		static App *			m_p_instance;
+		double					m_t;
+		double					m_fps;
+		GLFWwindow *			m_pWindow;
+		utils::Camera *			m_pCamera;
+		core::GUIState *		m_pGUIState;
+		utils::ShaderProgram *	m_pShaderProgram;
 	
 	/* ***************************************************** */
 	/* ************* CONSTUCTION AND DESTUCTION ************ */
@@ -60,19 +57,13 @@ namespace core
 		int32_t runApp(void);
 		void exitApp(void);
 
-		/* ***************************************************** */
-		/* ********************** STATICS ********************** */
-		/* ***************************************************** */
+	/* ***************************************************** */
+	/* ********************** STATICS ********************** */
+	/* ***************************************************** */
 	public:
 		static void init_app(int argc, char** argv);
 		static int32_t run_app(void);
 		static void exit_app(void);
-
-		/* Shaders utils */
-		static int check_link_error(GLuint program);
-		static int check_compile_error(GLuint shader, const char ** sourceBuffer);
-		static GLuint compile_shader(GLenum shaderType, const char * sourceBuffer, int bufferSize);
-		static GLuint compile_shader_from_file(GLenum shaderType, const char * fileName);
 
 	}; // class App
 

@@ -8,6 +8,7 @@
 #include <memory>
 
 #include "Utils/Camera.h"
+#include "Utils\ShaderProgram.h"
 #include "GUIState.h"
 
 #include "glm/glm.hpp"
@@ -29,7 +30,7 @@ namespace core
 		, m_pWindow(NULL)
 		, m_pCamera(NULL)
 		, m_pGUIState(NULL)
-		, m_programObject(0)
+		, m_pShaderProgram(NULL)
 	{}
 
 	App::~App(void)
@@ -119,76 +120,15 @@ namespace core
 
 	void App::initShaders(void)
 	{
-		m_pVertexShadersID[0] = compile_shader_from_file(GL_VERTEX_SHADER, "../../glsl/simple.vert");
-		m_pFragmentShadersID[0] = compile_shader_from_file(GL_FRAGMENT_SHADER, "../../glsl/simple.frag");
-		m_programObject = glCreateProgram();
-		glAttachShader(m_programObject, m_pVertexShadersID[0]);
-		glAttachShader(m_programObject, m_pFragmentShadersID[0]);
-		glLinkProgram(m_programObject);
-		if (check_link_error(m_programObject) < 0)
+		m_pShaderProgram = utils::ShaderProgram::create_ptr();
+		m_pShaderProgram->addShader(GL_VERTEX_SHADER, "../../glsl/simple.vert");
+		m_pShaderProgram->addShader(GL_FRAGMENT_SHADER, "../../glsl/simple.frag");
+	
+		std::string logInfo;
+		if (!m_pShaderProgram->compileAndLinkShaders(logInfo))
 		{
-			//error
-			// TODO : check if we need to free
-			exit(1);
+			throw std::runtime_error(logInfo);
 		}
-	}
-
-	GLuint App::compile_shader_from_file(GLenum shaderType, const char * path)
-	{
-		FILE * shaderFileDesc = fopen(path, "rb");
-		if (!shaderFileDesc)
-			return 0;
-		fseek(shaderFileDesc, 0, SEEK_END);
-		long fileSize = ftell(shaderFileDesc);
-		rewind(shaderFileDesc);
-		char * buffer = new char[fileSize + 1];
-		fread(buffer, 1, fileSize, shaderFileDesc);
-		buffer[fileSize] = '\0';
-		GLuint shaderObject = compile_shader(shaderType, buffer, fileSize);
-		delete[] buffer;
-		return shaderObject;
-	}
-
-	GLuint App::compile_shader(GLenum shaderType, const char * sourceBuffer, int bufferSize)
-	{
-		GLuint shaderObject = glCreateShader(shaderType);
-		const char * sc[1] = { sourceBuffer };
-		glShaderSource(shaderObject,
-			1,
-			sc,
-			NULL);
-		glCompileShader(shaderObject);
-		check_compile_error(shaderObject, sc);
-		return shaderObject;
-	}
-
-	int App::check_compile_error(GLuint shader, const char ** sourceBuffer)
-	{
-		// If an error happend quit
-		int status;
-		glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
-		if (status == GL_FALSE)
-			return -1;
-		return 0;
-	}
-
-	int App::check_link_error(GLuint program)
-	{
-		// Get link error log size and print it eventually
-		int logLength;
-		glGetProgramiv(program, GL_INFO_LOG_LENGTH, &logLength);
-		if (logLength > 1)
-		{
-			char * log = new char[logLength];
-			glGetProgramInfoLog(program, logLength, &logLength, log);
-			fprintf(stderr, "Link : %s \n", log);
-			delete[] log;
-		}
-		int status;
-		glGetProgramiv(program, GL_LINK_STATUS, &status);
-		if (status == GL_FALSE)
-			return -1;
-		return 0;
 	}
 
 	int32_t App::run_app(void)
@@ -211,6 +151,14 @@ namespace core
 			0.50, -1.0, -1.0
 		};
 		float plane_normals[] = { 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0 };
+
+		// Second object
+		int cube_triangleCount = 12;
+		int cube_triangleList[] = { 0, 1, 2, 2, 1, 3, 4, 5, 6, 6, 5, 7, 8, 9, 10, 10, 9, 11, 12, 13, 14, 14, 13, 15, 16, 17, 18, 19, 17, 20, 21, 22, 23, 24, 25, 26, };
+		float cube_uvs[] = { 0.f, 0.f, 0.f, 1.f, 1.f, 0.f, 1.f, 1.f, 0.f, 0.f, 0.f, 1.f, 1.f, 0.f, 1.f, 1.f, 0.f, 0.f, 0.f, 1.f, 1.f, 0.f, 1.f, 1.f, 0.f, 0.f, 0.f, 1.f, 1.f, 0.f, 1.f, 1.f, 0.f, 0.f, 0.f, 1.f, 1.f, 0.f, 1.f, 0.f, 1.f, 1.f, 0.f, 1.f, 1.f, 1.f, 0.f, 0.f, 0.f, 0.f, 1.f, 1.f, 1.f, 0.f, };
+		float cube_vertices[] = { -0.5, -0.5, 0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, 0.5, -0.5, 0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, 0.5, 0.5 };
+		float cube_normals[] = { 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, };
+
 		
 		// Create a Vertex Array Object
 		GLuint vaoPlane;
@@ -249,12 +197,50 @@ namespace core
 		glBindVertexArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+		// Create a Vertex Array Object
+		GLuint vao;
+		glGenVertexArrays(1, &vao);
+
+		// Create a VBO for each array
+		GLuint vbo[4];
+		glGenBuffers(4, vbo);
+
+		// Bind the VAO
+		glBindVertexArray(vao);
+
+		// Bind indices and upload data
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[0]);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cube_triangleList), cube_triangleList, GL_STATIC_DRAW);
+
+		// Bind vertices and upload data
+		glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)* 3, (void*)0);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(cube_vertices), cube_vertices, GL_STATIC_DRAW);
+
+		// Bind normals and upload data
+		glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)* 3, (void*)0);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(cube_normals), cube_normals, GL_STATIC_DRAW);
+
+		// Bind uv coords and upload data
+		glBindBuffer(GL_ARRAY_BUFFER, vbo[3]);
+		glEnableVertexAttribArray(2);
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)* 2, (void*)0);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(cube_uvs), cube_uvs, GL_STATIC_DRAW);
+
+		// Unbind everything
+		glBindVertexArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 		
 		// Viewport 
 		glViewport(0, 0, 1024, 768);
 
 		// Upload uniforms
-		GLuint mvpLocation = glGetUniformLocation(m_programObject, "MVP");
+		GLuint mvpLocation = m_pShaderProgram->getUniformIndex("MVP");
 
 		do
 		{
@@ -292,27 +278,31 @@ namespace core
 			{
 				double mousex; double mousey;
 				glfwGetCursorPos(m_pWindow, &mousex, &mousey);
-				int diffLockPositionX = mousex - m_pGUIState->getLockPosition(0);
-				int diffLockPositionY = mousey - m_pGUIState->getLockPosition(1);
+				double diffLockPositionX = mousex - m_pGUIState->getLockPosition(0);
+				double diffLockPositionY = mousey - m_pGUIState->getLockPosition(1);
 				if (m_pGUIState->isZoomLock())
 				{
 					float zoomDir = 0.0;
 					if (diffLockPositionX > 0)
+					{
 						zoomDir = -1.f;
+					}
 					else if (diffLockPositionX < 0)
+					{
 						zoomDir = 1.f;
-					m_pCamera->zoom(zoomDir * GUIState::get_mouse_zoom_speed());
+					}
+					m_pCamera->zoom(float(zoomDir * GUIState::get_mouse_zoom_speed()));
 				}
 				else if (m_pGUIState->isTurnLock())
 				{
-					m_pCamera->turn(diffLockPositionY * GUIState::get_mouse_turn_speed(),
-						diffLockPositionX * GUIState::get_mouse_turn_speed());
+					m_pCamera->turn(float(diffLockPositionY * GUIState::get_mouse_turn_speed()),
+						float(diffLockPositionX * GUIState::get_mouse_turn_speed()));
 
 				}
 				else if (m_pGUIState->isPanLock())
 				{
-					m_pCamera->pan(diffLockPositionX * GUIState::get_mouse_pan_speed(),
-						diffLockPositionY * GUIState::get_mouse_pan_speed());
+					m_pCamera->pan(float(diffLockPositionX * GUIState::get_mouse_pan_speed()),
+						float(diffLockPositionY * GUIState::get_mouse_pan_speed()));
 				}
 				m_pGUIState->setLockPosition(mousex, mousey);
 			}
@@ -334,12 +324,17 @@ namespace core
 			glm::mat4 mvp = projection * worldToView * objectToWorld;
 
 			// Select shader
-			glUseProgram(m_programObject);
+			m_pShaderProgram->use();
 
 			// Upload uniforms
-			glProgramUniformMatrix4fv(m_programObject, mvpLocation, 1, 0, glm::value_ptr(mvp));
-
+			m_pShaderProgram->setUniform(mvpLocation, mvp);
+			
 			// Render here
+
+			// Render cube
+			glBindVertexArray(vao);
+			glDrawElementsInstanced(GL_TRIANGLES, cube_triangleCount * 3, GL_UNSIGNED_INT, (void*)0, 1);
+
 
 			// Render plane
 			glBindVertexArray(vaoPlane);

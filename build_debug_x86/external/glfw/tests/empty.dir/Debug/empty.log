@@ -1,14 +1,6 @@
-﻿Build started 27/01/2015 22:17:45.
-     1>Project "L:\OpenGL\Projet\build_debug_x86\external\glfw\tests\empty.vcxproj" on node 3 (Build target(s)).
-     1>CustomBuild:
-         Building Custom Rule L:/OpenGL/Projet/external/glfw/tests/CMakeLists.txt
-         CMake does not need to re-run because L:\OpenGL\Projet\build_debug_x86\external\glfw\tests\CMakeFiles\generate.stamp is up-to-date.
-       ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /IL:\OpenGL\Projet\build_debug_x86\external\glfw\tests /IL:\OpenGL\Projet\external\glfw\tests /IL:\OpenGL\Projet\external\glfw\include /IL:\OpenGL\Projet\external\glfw\deps /Zi /nologo /W3 /WX- /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D _CRT_SECURE_NO_DEPRECATE /D _CRT_SECURE_NO_WARNINGS /D _SCL_SECURE_NO_WARNINGS /D _CRT_NONSTDC_NO_DEPRECATE /D _SECURE_SCL=0 /D _HAS_ITERATOR_DEBUGGING=0 /D __STDC_LIMIT_MACROS /D __STDC_CONSTANT_MACROS /D _UNICODE /D UNICODE /D NOMINMAX /D "CMAKE_INTDIR=\"Debug\"" /D _UNICODE /D UNICODE /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"empty.dir\Debug\\" /Fd"empty.dir\Debug\vc120.pdb" /Gd /TC /analyze- /errorReport:prompt L:\OpenGL\Projet\external\glfw\tests\empty.c L:\OpenGL\Projet\external\glfw\deps\tinycthread.c
-         empty.c
-         tinycthread.c
-         Generating Code...
-       Link:
+﻿Build started 01/02/2015 14:49:33.
+     1>Project "L:\OpenGL\Projet\build_debug_x86\external\glfw\tests\empty.vcxproj" on node 4 (Build target(s)).
+     1>Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"L:\OpenGL\Projet\build_debug_x86\bin\Debug\empty.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib ..\..\..\lib\Debug\glfw3.lib glu32.lib opengl32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"L:/OpenGL/Projet/build_debug_x86/bin/Debug/empty.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /ENTRY:"mainCRTStartup" /DYNAMICBASE /NXCOMPAT /IMPLIB:"L:/OpenGL/Projet/build_debug_x86/lib/Debug/empty.lib" /MACHINE:X86 /SAFESEH  /machine:X86 /debug empty.dir\Debug\empty.obj
          empty.dir\Debug\tinycthread.obj
          empty.vcxproj -> L:\OpenGL\Projet\build_debug_x86\bin\Debug\empty.exe
@@ -16,4 +8,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:01.82
+Time Elapsed 00:00:00.93

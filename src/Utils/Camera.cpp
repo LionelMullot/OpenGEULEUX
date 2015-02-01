@@ -47,7 +47,7 @@ namespace utils
 	{
 		m_vEye.x = cos(m_fTheta) * sin(m_fPhi) * m_fRadius + m_vOrigin.x;
 		m_vEye.y = cos(m_fPhi) * m_fRadius + m_vOrigin.y;
-		m_vEye.y = sin(m_fTheta) * sin(m_fPhi) * m_fRadius + m_vOrigin.z;
+		m_vEye.z = sin(m_fTheta) * sin(m_fPhi) * m_fRadius + m_vOrigin.z;
 
 		m_vUp = glm::vec3(0.f, m_fPhi < M_PI ? 1.f : -1.f, 0.f);
 	}
@@ -73,7 +73,7 @@ namespace utils
 
 	void Camera::turn(float p_phi, float p_theta)
 	{
-		m_fTheta += 1.f * m_fTheta;
+		m_fTheta += 1.f * p_theta;
 		m_fPhi -= 1.f * p_phi;
 		if (m_fPhi >= (2 * M_PI) - 0.1)
 			m_fPhi = 0.00001f;
@@ -85,7 +85,7 @@ namespace utils
 	void Camera::pan(float p_x, float p_y)
 	{
 		glm::vec3 up(0.f, m_fPhi < M_PI ? 1.f : -1.f, 0.f);
-		glm::vec3 fwd = glm::normalize(m_vOrigin - m_vEye);
+		glm::vec3 fwd = glm::normalize(m_vOrigin- - m_vEye);
 		glm::vec3 side = glm::normalize(glm::cross(fwd, up));
 		m_vUp = glm::normalize(glm::cross(side, fwd));
 		m_vOrigin[0] += up[0] * p_y * m_fRadius * 2;
