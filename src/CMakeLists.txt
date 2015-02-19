@@ -1,4 +1,4 @@
-
+ 
 # Project name
 project( Project_OpenGL )
 
@@ -21,7 +21,8 @@ set( CORE_SRCS
 	 ${CMAKE_CURRENT_SOURCE_DIR}/Core/App.cpp
 	 ${CMAKE_CURRENT_SOURCE_DIR}/Core/App.h 
 	 ${CMAKE_CURRENT_SOURCE_DIR}/Core/GUIState.cpp 
-	 ${CMAKE_CURRENT_SOURCE_DIR}/Core/GUIState.h )
+	 ${CMAKE_CURRENT_SOURCE_DIR}/Core/GUIState.h 
+	 ${CMAKE_CURRENT_SOURCE_DIR}/Core/Config.h  )
 
 set( SOURCE_FILES ${SOURCE_FILES} ${CORE_SRCS} )
 source_group( "Core" FILES ${CORE_SRCS} )
@@ -35,11 +36,44 @@ set( UTILS_SRCS
 	 ${CMAKE_CURRENT_SOURCE_DIR}/Utils/Shader.h
 	 ${CMAKE_CURRENT_SOURCE_DIR}/Utils/ShaderProgram.cpp
 	 ${CMAKE_CURRENT_SOURCE_DIR}/Utils/ShaderProgram.h
+	 ${CMAKE_CURRENT_SOURCE_DIR}/Utils/QuadBlit.cpp
+	 ${CMAKE_CURRENT_SOURCE_DIR}/Utils/QuadBlit.h
  )
 
 set( SOURCE_FILES ${SOURCE_FILES} ${UTILS_SRCS} )
 
 source_group( "Utils" FILES ${UTILS_SRCS} )
+
+# WorldObject
+#################################################
+set( WO_SRCS
+	 ${CMAKE_CURRENT_SOURCE_DIR}/WorldObject/Cube.cpp
+	 ${CMAKE_CURRENT_SOURCE_DIR}/WorldObject/Cube.h
+	 ${CMAKE_CURRENT_SOURCE_DIR}/WorldObject/Plane.cpp
+	 ${CMAKE_CURRENT_SOURCE_DIR}/WorldObject/Plane.h
+	 ${CMAKE_CURRENT_SOURCE_DIR}/WorldObject/Scene.cpp
+	 ${CMAKE_CURRENT_SOURCE_DIR}/WorldObject/Scene.h
+	 ${CMAKE_CURRENT_SOURCE_DIR}/WorldObject/Object3D.h
+	 ${CMAKE_CURRENT_SOURCE_DIR}/WorldObject/Object3D.cpp
+ )
+
+set( SOURCE_FILES ${SOURCE_FILES} ${WO_SRCS} )
+
+source_group( "WorldObject" FILES ${WO_SRCS} )
+
+# Renderer
+#################################################
+set( RENDERER_SRCS
+	 ${CMAKE_CURRENT_SOURCE_DIR}/Renderer/GBufferRenderer.cpp
+	 ${CMAKE_CURRENT_SOURCE_DIR}/Renderer/GBufferRenderer.h
+	 ${CMAKE_CURRENT_SOURCE_DIR}/Renderer/BlitRenderer.cpp
+	 ${CMAKE_CURRENT_SOURCE_DIR}/Renderer/BlitRenderer.h
+	 ${CMAKE_CURRENT_SOURCE_DIR}/Renderer/IlluminationRenderer.cpp
+	 ${CMAKE_CURRENT_SOURCE_DIR}/Renderer/IlluminationRenderer.h )
+
+set( SOURCE_FILES ${SOURCE_FILES} ${RENDERER_SRCS} )
+
+source_group( "Renderer" FILES ${RENDERER_SRCS} )
 
 # Visual Leak Detector.
 #################################################
@@ -70,6 +104,7 @@ ADD_DEFINITIONS( -DGLEW_STATIC=1 )
 # GLFW
 
 include_directories( ${CMAKE_SOURCE_DIR}/external/glm ) #GLM
+include_directories( ${CMAKE_SOURCE_DIR}/external/stb ) #STB
 include_directories( ${CMAKE_SOURCE_DIR}/external/glfw/include ) #GLFW
 include_directories( ${OPENGL_INCLUDE_DIR} ${GLEW_INCLUDE_DIRS} )
 

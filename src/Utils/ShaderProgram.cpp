@@ -105,7 +105,9 @@ namespace utils
 		for (currentShader = m_vShadersList.begin(); currentShader != m_vShadersList.end(); ++currentShader)
 		{
 			if (!(*currentShader)->compile(logInfo))
+			{
 				return false;
+			}
 			glAttachShader(m_programId, (*currentShader)->getGLId());
 		}
 
@@ -113,7 +115,8 @@ namespace utils
 
 		GLint linkStatus;
 		glGetProgramiv(m_programId, GL_LINK_STATUS, &linkStatus);
-		if (linkStatus == GL_FALSE) {
+		if (linkStatus == GL_FALSE) 
+		{
 			GLint logLength;
 			glGetProgramiv(m_programId, GL_INFO_LOG_LENGTH, &logLength);
 
@@ -123,9 +126,11 @@ namespace utils
 			logInfo.append(log);
 			return false;
 		}
-		for (currentShader = m_vShadersList.begin(); currentShader
-			!= m_vShadersList.end(); ++currentShader)
+		for (currentShader = m_vShadersList.begin(); currentShader != m_vShadersList.end(); ++currentShader)
+		{
 			glDetachShader(m_programId, (*currentShader)->getGLId());
+		}
+			
 		return true;
 	}
 
@@ -134,42 +139,42 @@ namespace utils
 		glUseProgram(m_programId);
 	}
 
-	GLint ShaderProgram::getUniformIndex(const std::string &uniformName) const
+	GLuint ShaderProgram::getUniformIndex(const std::string &uniformName) const
 	{
 		return glGetUniformLocation(m_programId, uniformName.c_str());
 	}
 
-	void ShaderProgram::setUniform(GLint uniformIndex, const glm::mat3 &matrix) const
+	void ShaderProgram::setUniform(GLuint uniformIndex, const glm::mat3 &matrix) const
 	{
 		glUniformMatrix3fv(uniformIndex, 1, GL_FALSE, glm::value_ptr(matrix));
 	}
 
-	void ShaderProgram::setUniform(GLint uniformIndex, const glm::mat4& matrix) const
+	void ShaderProgram::setUniform(GLuint uniformIndex, const glm::mat4& matrix) const
 	{
 		glUniformMatrix4fv(uniformIndex, 1, GL_FALSE, glm::value_ptr(matrix));
 	}
 
-	void ShaderProgram::setUniform(GLint uniformIndex, const glm::vec4& vector) const
+	void ShaderProgram::setUniform(GLuint uniformIndex, const glm::vec4& vector) const
 	{
 		glUniform4f(uniformIndex, vector.x, vector.y, vector.z, vector.w);
 	}
 
-	void ShaderProgram::setUniform(GLint uniformIndex, const glm::vec3& vector) const
+	void ShaderProgram::setUniform(GLuint uniformIndex, const glm::vec3& vector) const
 	{
 		glUniform3fv(uniformIndex, 1, glm::value_ptr(vector));
 	}
 
-	void ShaderProgram::setUniform(GLint uniformIndex, float scalar) const
+	void ShaderProgram::setUniform(GLuint uniformIndex, float scalar) const
 	{
 		glUniform1f(uniformIndex, scalar);
 	}
 
-	void ShaderProgram::setUniform(GLint uniformIndex, int scalar) const
+	void ShaderProgram::setUniform(GLuint uniformIndex, int scalar) const
 	{
 		glUniform1i(uniformIndex, scalar);
 	}
 
-	void ShaderProgram::setUniform(GLint uniformIndex, bool value) const
+	void ShaderProgram::setUniform(GLuint uniformIndex, bool value) const
 	{
 		glUniform1i(uniformIndex, value);
 	}

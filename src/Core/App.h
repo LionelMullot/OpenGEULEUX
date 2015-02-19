@@ -11,6 +11,19 @@ namespace utils
 {
 	class Camera;
 	class ShaderProgram;
+	class QuadBlit;
+}
+
+namespace renderer
+{
+	class GBufferRenderer;
+	class BlitRenderer;
+	class IlluminationRenderer;
+}
+
+namespace worldObject
+{
+	class Scene;
 }
 
 namespace core
@@ -28,8 +41,14 @@ namespace core
 		GLFWwindow *			m_pWindow;
 		utils::Camera *			m_pCamera;
 		core::GUIState *		m_pGUIState;
-		utils::ShaderProgram *	m_pShaderProgram;
-	
+		worldObject::Scene *	m_pScene;
+		utils::QuadBlit	*		m_pQuadBlit;
+
+		// Renderer variables
+		renderer::GBufferRenderer *			m_pGbuffer;
+		renderer::BlitRenderer *			m_pBlit;
+		renderer::IlluminationRenderer *	m_pIllumination;
+
 	/* ***************************************************** */
 	/* ************* CONSTUCTION AND DESTUCTION ************ */
 	/* ***************************************************** */
@@ -51,7 +70,8 @@ namespace core
 		void initGlew(void);
 		void initCamera(void);
 		void initGUIState(void);
-		void initShaders(void);
+		void initRenderers(void);
+		void initScene(void);
 		void initApp(int argc, char** argv);
 
 		int32_t runApp(void);

@@ -7,9 +7,17 @@
 #include <cassert>
 #include <memory>
 
+#include "Config.h"
 #include "Utils/Camera.h"
-#include "Utils\ShaderProgram.h"
+#include "Utils/QuadBlit.h"
+#include "Utils/ShaderProgram.h"
 #include "GUIState.h"
+#include "WorldObject/Cube.h"
+#include "WorldObject/Plane.h"
+#include "WorldObject/Scene.h"
+#include "Renderer/GBufferRenderer.h"
+#include "Renderer/BlitRenderer.h"
+#include "Renderer/IlluminationRenderer.h"
 
 #include "glm/glm.hpp"
 #include "glm/vec3.hpp" // glm::vec3
@@ -30,7 +38,11 @@ namespace core
 		, m_pWindow(NULL)
 		, m_pCamera(NULL)
 		, m_pGUIState(NULL)
-		, m_pShaderProgram(NULL)
+		, m_pScene(NULL)
+		, m_pQuadBlit(NULL)
+		, m_pGbuffer(NULL)
+		, m_pBlit(NULL)
+		, m_pIllumination(NULL)
 	{}
 
 	App::~App(void)
@@ -58,7 +70,8 @@ namespace core
 
 		initCamera();
 		initGUIState();
-		initShaders();
+		initRenderers();
+		initScene();
 	}
 
 	void App::initGLFW(void)
@@ -84,7 +97,7 @@ namespace core
 	void App::initWindow(void)
 	{
 		// Open a window and create its OpenGL context
-		m_pWindow = glfwCreateWindow(1024, 768, "Projet", 0, 0);
+		m_pWindow = glfwCreateWindow(core::Config::WINDOW_WIDTH, core::Config::WINDOW_HEIGHT, "Projet", 0, 0);
 		if (!m_pWindow)
 		{
 			fprintf(stderr, "Failed to open GLFW window\n");
@@ -118,17 +131,24 @@ namespace core
 		m_pGUIState = core::GUIState::create_ptr();
 	}
 
-	void App::initShaders(void)
+	void App::initRenderers(void)
 	{
-		m_pShaderProgram = utils::ShaderProgram::create_ptr();
-		m_pShaderProgram->addShader(GL_VERTEX_SHADER, "../../glsl/simple.vert");
-		m_pShaderProgram->addShader(GL_FRAGMENT_SHADER, "../../glsl/simple.frag");
-	
-		std::string logInfo;
-		if (!m_pShaderProgram->compileAndLinkShaders(logInfo))
-		{
-			throw std::runtime_error(logInfo);
-		}
+		m_pGbuffer = renderer::GBufferRenderer::create_ptr();
+		m_pIllumination = renderer::IlluminationRenderer::create_ptr();
+		m_pBlit = renderer::BlitRenderer::create_ptr();
+	}
+
+	void App::initScene(void)
+	{
+		m_pScene = worldObject::Scene::create_ptr();
+
+		worldObject::Cube * cube = worldObject::Cube::create_ptr();
+		worldObject::Plane * plane = worldObject::Plane::create_ptr();
+
+		m_pScene->addObject(cube);
+		m_pScene->addObject(plane);
+
+		m_pQuadBlit = utils::QuadBlit::create_ptr();
 	}
 
 	int32_t App::run_app(void)
@@ -140,107 +160,8 @@ namespace core
 
 	int32_t App::runApp(void)
 	{
-		// First object
-		int32_t plane_triangleCount = 2;
-		int32_t plane_triangleList[] = { 0, 1, 2, 2, 1, 3 };
-		float plane_uvs[] = { 0.f, 0.f, 0.f, 1.f, 1.f, 0.f, 1.f, 1.f };
-		float plane_vertices[] = { 
-			-2.0, -1.0, 1.0,
-			0.50, -1.0, 2.0,
-			-0.50, -1.0, -1.0,
-			0.50, -1.0, -1.0
-		};
-		float plane_normals[] = { 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0 };
-
-		// Second object
-		int cube_triangleCount = 12;
-		int cube_triangleList[] = { 0, 1, 2, 2, 1, 3, 4, 5, 6, 6, 5, 7, 8, 9, 10, 10, 9, 11, 12, 13, 14, 14, 13, 15, 16, 17, 18, 19, 17, 20, 21, 22, 23, 24, 25, 26, };
-		float cube_uvs[] = { 0.f, 0.f, 0.f, 1.f, 1.f, 0.f, 1.f, 1.f, 0.f, 0.f, 0.f, 1.f, 1.f, 0.f, 1.f, 1.f, 0.f, 0.f, 0.f, 1.f, 1.f, 0.f, 1.f, 1.f, 0.f, 0.f, 0.f, 1.f, 1.f, 0.f, 1.f, 1.f, 0.f, 0.f, 0.f, 1.f, 1.f, 0.f, 1.f, 0.f, 1.f, 1.f, 0.f, 1.f, 1.f, 1.f, 0.f, 0.f, 0.f, 0.f, 1.f, 1.f, 1.f, 0.f, };
-		float cube_vertices[] = { -0.5, -0.5, 0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, 0.5, -0.5, 0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, 0.5, 0.5 };
-		float cube_normals[] = { 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, };
-
-		
-		// Create a Vertex Array Object
-		GLuint vaoPlane;
-		glGenVertexArrays(1, &vaoPlane);
-
-		// Create a VBO for each array
-		GLuint vboPlane[4];
-		glGenBuffers(4, vboPlane);
-
-		// Bind the VAO
-		glBindVertexArray(vaoPlane);
-
-		// Bind indices and upload data
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vboPlane[0]);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(plane_triangleList), plane_triangleList, GL_STATIC_DRAW);
-
-		// Bind vertices and upload data
-		glBindBuffer(GL_ARRAY_BUFFER, vboPlane[1]);
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)* 3, (void*)0);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(plane_vertices), plane_vertices, GL_STATIC_DRAW);
-
-		// Bind normals and upload data
-		glBindBuffer(GL_ARRAY_BUFFER, vboPlane[2]);
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)* 3, (void*)0);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(plane_normals), plane_normals, GL_STATIC_DRAW);
-
-		// Bind uv coords and upload data
-		glBindBuffer(GL_ARRAY_BUFFER, vboPlane[3]);
-		glEnableVertexAttribArray(2);
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)* 2, (void*)0);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(plane_uvs), plane_uvs, GL_STATIC_DRAW);
-
-		// Unbind everything
-		glBindVertexArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-		// Create a Vertex Array Object
-		GLuint vao;
-		glGenVertexArrays(1, &vao);
-
-		// Create a VBO for each array
-		GLuint vbo[4];
-		glGenBuffers(4, vbo);
-
-		// Bind the VAO
-		glBindVertexArray(vao);
-
-		// Bind indices and upload data
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[0]);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cube_triangleList), cube_triangleList, GL_STATIC_DRAW);
-
-		// Bind vertices and upload data
-		glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)* 3, (void*)0);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(cube_vertices), cube_vertices, GL_STATIC_DRAW);
-
-		// Bind normals and upload data
-		glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)* 3, (void*)0);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(cube_normals), cube_normals, GL_STATIC_DRAW);
-
-		// Bind uv coords and upload data
-		glBindBuffer(GL_ARRAY_BUFFER, vbo[3]);
-		glEnableVertexAttribArray(2);
-		glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)* 2, (void*)0);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(cube_uvs), cube_uvs, GL_STATIC_DRAW);
-
-		// Unbind everything
-		glBindVertexArray(0);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-		
 		// Viewport 
-		glViewport(0, 0, 1024, 768);
-
-		// Upload uniforms
-		GLuint mvpLocation = m_pShaderProgram->getUniformIndex("MVP");
+		glViewport(0, 0, core::Config::WINDOW_WIDTH, core::Config::WINDOW_HEIGHT);
 
 		do
 		{
@@ -306,39 +227,37 @@ namespace core
 				}
 				m_pGUIState->setLockPosition(mousex, mousey);
 			}
-
-			// Default states
-			glEnable(GL_DEPTH_TEST);
-
-			// Clear the front buffer
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+			
 			// Get camera matrices
-			glm::mat4 projection = glm::perspective(45.0f, 1024.f / 728.f, 0.1f, 100.f);
+			glm::mat4 projection = glm::perspective(45.0f, (float)core::Config::WINDOW_WIDTH / (float)core::Config::WINDOW_HEIGHT, 0.1f, 100.f);
 			glm::mat4 worldToView = glm::lookAt(
-				m_pCamera->getWhereILook(), 
+				m_pCamera->getWhereILook(),
 				m_pCamera->getOrigin(), 
 				m_pCamera->getUp()
 			);
 			glm::mat4 objectToWorld;
 			glm::mat4 mvp = projection * worldToView * objectToWorld;
 
-			// Select shader
-			m_pShaderProgram->use();
+			// Clear the front buffer
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-			// Upload uniforms
-			m_pShaderProgram->setUniform(mvpLocation, mvp);
-			
-			// Render here
+			// Default states
+			glEnable(GL_DEPTH_TEST);
 
-			// Render cube
-			glBindVertexArray(vao);
-			glDrawElementsInstanced(GL_TRIANGLES, cube_triangleCount * 3, GL_UNSIGNED_INT, (void*)0, 1);
+			// RENDER GBUFFEROBJECT
+			m_pGbuffer->render(m_pScene, mvp);
 
-
-			// Render plane
-			glBindVertexArray(vaoPlane);
-			glDrawElementsInstanced(GL_TRIANGLES, plane_triangleCount * 3, GL_UNSIGNED_INT, (void*)0, 1);
+			// RENDER ILLUMINATION
+			m_pIllumination->addTextureToDraw(m_pGbuffer->getTextureId(0), 0);
+			m_pIllumination->addTextureToDraw(m_pGbuffer->getTextureId(1), 1);
+			m_pIllumination->addTextureToDraw(m_pGbuffer->getTextureId(2), 2);
+			m_pIllumination->render(m_pQuadBlit);
+	
+			// RENDER BLIT QUADS
+			m_pBlit->addTextureToDraw(m_pGbuffer->getTextureId(0), 0);
+			m_pBlit->addTextureToDraw(m_pGbuffer->getTextureId(1), 1);
+			m_pBlit->addTextureToDraw(m_pGbuffer->getTextureId(2), 2);
+			m_pBlit->render(m_pQuadBlit);
 
 			glfwSwapBuffers(m_pWindow);
 			glfwPollEvents();
@@ -356,16 +275,20 @@ namespace core
 		m_p_instance->exitApp();
 		delete m_p_instance;
 
-		// Close OpenGL window and terminate GLFW
-		glfwTerminate();
-
 		exit(EXIT_SUCCESS);
 	}
 
 	void App::exitApp(void)
 	{
-		//Window::release_ptr(m_pWindow);
-		//utils::Camera::release_ptr(m_pCamera);
+		utils::Camera::release_ptr(m_pCamera);
+		core::GUIState::release_ptr(m_pGUIState);
+		worldObject::Scene::release_ptr(m_pScene);
+		renderer::BlitRenderer::release_ptr(m_pBlit);
+		renderer::GBufferRenderer::release_ptr(m_pGbuffer);
+		renderer::IlluminationRenderer::release_ptr(m_pIllumination);
+
+		// Close OpenGL window and terminate GLFW
+		glfwTerminate();
 	}
 
 }; // namespace Core
