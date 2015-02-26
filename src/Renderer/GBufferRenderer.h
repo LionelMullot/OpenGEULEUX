@@ -31,7 +31,8 @@ namespace renderer
 		utils::ShaderProgram *	m_pShaderProgram;
 
 		// Uniforms
-		GLuint	m_glMvpMatrixLocation;
+		GLuint	m_glProjectionMatrixLocation;
+		GLuint	m_glWorldToViewMatrixLocation;
 		GLuint	m_glDiffuseTextureLocation;
 		GLuint	m_glSpecularTextureLocation;
 		GLuint	m_glSpecularPowerLocation;
@@ -54,7 +55,7 @@ namespace renderer
 		/* ********************** METHODS ********************** */
 		/* ***************************************************** */
 	public:
-		void render(const worldObject::Scene * p_pScene, const glm::mat4& p_mvp);
+		void render(const worldObject::Scene * p_pScene, const glm::mat4& p_mProjection, const glm::mat4& p_mWorldToView, glm::mat4& p_mObjectToWorld);
 
 		/* ***************************************************** */
 		/* *************** GETTER / SETTER ********************* */

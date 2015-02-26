@@ -55,6 +55,10 @@ set( WO_SRCS
 	 ${CMAKE_CURRENT_SOURCE_DIR}/WorldObject/Scene.h
 	 ${CMAKE_CURRENT_SOURCE_DIR}/WorldObject/Object3D.h
 	 ${CMAKE_CURRENT_SOURCE_DIR}/WorldObject/Object3D.cpp
+	 ${CMAKE_CURRENT_SOURCE_DIR}/WorldObject/Light.h
+	 ${CMAKE_CURRENT_SOURCE_DIR}/WorldObject/Light.cpp
+	 ${CMAKE_CURRENT_SOURCE_DIR}/WorldObject/AreaLight.h
+	 ${CMAKE_CURRENT_SOURCE_DIR}/WorldObject/AreaLight.cpp
  )
 
 set( SOURCE_FILES ${SOURCE_FILES} ${WO_SRCS} )
@@ -105,6 +109,7 @@ ADD_DEFINITIONS( -DGLEW_STATIC=1 )
 
 include_directories( ${CMAKE_SOURCE_DIR}/external/glm ) #GLM
 include_directories( ${CMAKE_SOURCE_DIR}/external/stb ) #STB
+include_directories( ${CMAKE_SOURCE_DIR}/external/imgui ) #IMGUI
 include_directories( ${CMAKE_SOURCE_DIR}/external/glfw/include ) #GLFW
 include_directories( ${OPENGL_INCLUDE_DIR} ${GLEW_INCLUDE_DIRS} )
 

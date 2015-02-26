@@ -5,7 +5,9 @@
 #define TEXCOORD	2
 #define FRAG_COLOR	0
 
-uniform mat4 MVP;
+uniform mat4 Projection;
+uniform mat4 WorldToView;
+uniform mat4 ObjectToWorld;
 
 layout(location = POSITION) in vec3 Position;
 layout(location = NORMAL) in vec3 Normal;
@@ -24,5 +26,5 @@ void main()
 
 	vec4 pos = vec4(Position, 1.0);
 
-	gl_Position = MVP * pos;
+	gl_Position = Projection * WorldToView * ObjectToWorld * pos;
 }

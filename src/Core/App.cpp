@@ -15,6 +15,7 @@
 #include "WorldObject/Cube.h"
 #include "WorldObject/Plane.h"
 #include "WorldObject/Scene.h"
+#include "WorldObject/AreaLight.h"
 #include "Renderer/GBufferRenderer.h"
 #include "Renderer/BlitRenderer.h"
 #include "Renderer/IlluminationRenderer.h"
@@ -62,6 +63,7 @@ namespace core
 		initGLFW();
 		initWindow();
 		initGlew();
+		initUI();
 
 		// Ensure we can capture the escape key being pressed below
 		glfwSetInputMode(m_pWindow, GLFW_STICKY_KEYS, GL_TRUE);
@@ -70,7 +72,6 @@ namespace core
 
 		initCamera();
 		initGUIState();
-		initRenderers();
 		initScene();
 	}
 
@@ -120,6 +121,10 @@ namespace core
 		}
 	}
 
+	void App::initUI(void)
+	{
+	}
+
 	void App::initCamera(void)
 	{
 		m_pCamera = utils::Camera::create_ptr();
@@ -131,10 +136,10 @@ namespace core
 		m_pGUIState = core::GUIState::create_ptr();
 	}
 
-	void App::initRenderers(void)
+	void App::initRenderers(worldObject::AreaLight * areaLight)
 	{
 		m_pGbuffer = renderer::GBufferRenderer::create_ptr();
-		m_pIllumination = renderer::IlluminationRenderer::create_ptr();
+		m_pIllumination = renderer::IlluminationRenderer::create_ptr(areaLight);
 		m_pBlit = renderer::BlitRenderer::create_ptr();
 	}
 
@@ -144,11 +149,15 @@ namespace core
 
 		worldObject::Cube * cube = worldObject::Cube::create_ptr();
 		worldObject::Plane * plane = worldObject::Plane::create_ptr();
+		worldObject::AreaLight * areaLight = worldObject::AreaLight::create_ptr();
 
 		m_pScene->addObject(cube);
 		m_pScene->addObject(plane);
+		m_pScene->addObject(areaLight);
 
 		m_pQuadBlit = utils::QuadBlit::create_ptr();
+
+		initRenderers(areaLight);
 	}
 
 	int32_t App::run_app(void)
@@ -234,9 +243,12 @@ namespace core
 				m_pCamera->getWhereILook(),
 				m_pCamera->getOrigin(), 
 				m_pCamera->getUp()
-			);
-			glm::mat4 objectToWorld;
-			glm::mat4 mvp = projection * worldToView * objectToWorld;
+			); // Cam inv Model View
+			glm::mat4 objectToWorld; // Model Matrix for RTS (Rotation / Translation / Scale)
+			glm::mat4 mvp = projection * worldToView * objectToWorld; 
+			glm::vec3 vCameraPosition = m_pCamera->getWhereILook();
+			// Compute the inverse worldToScreen matrix
+			glm::mat4 screenToWorld = glm::transpose(glm::inverse(mvp));
 
 			// Clear the front buffer
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -245,13 +257,13 @@ namespace core
 			glEnable(GL_DEPTH_TEST);
 
 			// RENDER GBUFFEROBJECT
-			m_pGbuffer->render(m_pScene, mvp);
+			m_pGbuffer->render(m_pScene, projection, worldToView, objectToWorld);
 
 			// RENDER ILLUMINATION
 			m_pIllumination->addTextureToDraw(m_pGbuffer->getTextureId(0), 0);
 			m_pIllumination->addTextureToDraw(m_pGbuffer->getTextureId(1), 1);
 			m_pIllumination->addTextureToDraw(m_pGbuffer->getTextureId(2), 2);
-			m_pIllumination->render(m_pQuadBlit);
+			m_pIllumination->render(m_pQuadBlit, vCameraPosition, screenToWorld);
 	
 			// RENDER BLIT QUADS
 			m_pBlit->addTextureToDraw(m_pGbuffer->getTextureId(0), 0);

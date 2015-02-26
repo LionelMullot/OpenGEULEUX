@@ -65,6 +65,7 @@ namespace utils
 		void setUniform(GLuint uniformIndex, const glm::mat4& matrix) const;
 		void setUniform(GLuint uniformIndex, const glm::vec4& vector) const;
 		void setUniform(GLuint uniformIndex, const glm::vec3& vector) const;
+		void setUniform(GLuint uniformIndex, const glm::vec2& vector) const;
 		void setUniform(GLuint uniformIndex, float scalar) const;
 		void setUniform(GLuint uniformIndex, int scalar) const;
 		void setUniform(GLuint uniformIndex, bool value) const;

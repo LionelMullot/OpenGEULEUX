@@ -24,6 +24,7 @@ namespace renderer
 namespace worldObject
 {
 	class Scene;
+	class AreaLight;
 }
 
 namespace core
@@ -68,9 +69,10 @@ namespace core
 		void initGLFW(void);
 		void initWindow(void);
 		void initGlew(void);
+		void initUI(void);
 		void initCamera(void);
 		void initGUIState(void);
-		void initRenderers(void);
+		void initRenderers(worldObject::AreaLight * areaLight);
 		void initScene(void);
 		void initApp(int argc, char** argv);
 

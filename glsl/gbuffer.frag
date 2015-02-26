@@ -29,6 +29,4 @@ void main()
 
 	Color = vec4( diffuse, specular.r );
 	Normal = vec4( In.Normal, SpecularPower );
-
-	Color = vec4(0,1,0,1);	
 }

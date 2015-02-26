@@ -30,7 +30,8 @@ namespace renderer
 	GBufferRenderer::GBufferRenderer(void)
 		: m_glGBufferObject(0)
 		, m_pShaderProgram(NULL)
-		, m_glMvpMatrixLocation(0)
+		, m_glProjectionMatrixLocation(0)
+		, m_glWorldToViewMatrixLocation(0)
 		, m_glDiffuseTextureLocation(0)
 		, m_glSpecularTextureLocation(0)
 		, m_glSpecularPowerLocation(0)
@@ -52,7 +53,8 @@ namespace renderer
 			throw std::runtime_error(logInfo);
 		}
 
-		m_glMvpMatrixLocation = m_pShaderProgram->getUniformIndex("MVP");
+		m_glProjectionMatrixLocation = m_pShaderProgram->getUniformIndex("Projection");
+		m_glWorldToViewMatrixLocation = m_pShaderProgram->getUniformIndex("WorldToView");
 		m_glDiffuseTextureLocation = m_pShaderProgram->getUniformIndex("Diffuse");
 		m_glSpecularTextureLocation = m_pShaderProgram->getUniformIndex("Specular");
 		m_glSpecularPowerLocation = m_pShaderProgram->getUniformIndex("SpecularPower");
@@ -117,7 +119,7 @@ namespace renderer
 		}
 	}
 
-	void GBufferRenderer::render(const worldObject::Scene * p_pScene, const glm::mat4& p_MVP)
+	void GBufferRenderer::render(const worldObject::Scene * p_pScene, const glm::mat4& p_mProjection, const glm::mat4& p_mWorldToView, glm::mat4& p_mObjectToWorld)
 	{
 		if (m_pShaderProgram)
 		{
@@ -129,13 +131,14 @@ namespace renderer
 			m_pShaderProgram->use();
 
 			// Upload uniforms
-			m_pShaderProgram->setUniform(m_glMvpMatrixLocation, p_MVP);
+			m_pShaderProgram->setUniform(m_glProjectionMatrixLocation, p_mProjection);
+			m_pShaderProgram->setUniform(m_glWorldToViewMatrixLocation, p_mWorldToView);
 			m_pShaderProgram->setUniform(m_glDiffuseTextureLocation, 0);
 			m_pShaderProgram->setUniform(m_glSpecularTextureLocation, 1);
 			m_pShaderProgram->setUniform(m_glSpecularPowerLocation, 30.f);
 			
 			// Render scene 
-			p_pScene->draw();
+			p_pScene->draw(m_pShaderProgram, p_mObjectToWorld);
 
 			// Get back to the default FrameBufferObject
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);

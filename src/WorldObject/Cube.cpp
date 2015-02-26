@@ -106,7 +106,7 @@ namespace worldObject
 	{
 	}
 
-	void Cube::draw(void) const
+	void Cube::draw(const utils::ShaderProgram * p_pShaderProgram, glm::mat4& p_mObjectToWorld) const
 	{
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, m_Textures[0]);

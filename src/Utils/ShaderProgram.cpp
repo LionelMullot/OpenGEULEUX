@@ -164,6 +164,11 @@ namespace utils
 		glUniform3fv(uniformIndex, 1, glm::value_ptr(vector));
 	}
 
+	void ShaderProgram::setUniform(GLuint uniformIndex, const glm::vec2& vector) const
+	{
+		glUniform2fv(uniformIndex, 1, glm::value_ptr(vector));
+	}
+
 	void ShaderProgram::setUniform(GLuint uniformIndex, float scalar) const
 	{
 		glUniform1f(uniformIndex, scalar);

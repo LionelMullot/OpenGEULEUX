@@ -1,6 +1,7 @@
 
 #include "Scene.h"
 #include "Object3D.h"
+#include "Utils/ShaderProgram.h"
 
 #include <cassert>
 #include <iostream>
@@ -41,11 +42,12 @@ namespace worldObject
 		}
 	}
 
-	void Scene::draw(void) const
+	void Scene::draw(const utils::ShaderProgram * p_pShaderProgram, glm::mat4& p_mObjectToWorld) const
 	{
 		for (Object3D* p_object : m_pObject3D)
 		{
-			p_object->draw();
+			p_pShaderProgram->setUniform(p_pShaderProgram->getUniformIndex("ObjectToWorld"), p_mObjectToWorld);
+			p_object->draw(p_pShaderProgram, p_mObjectToWorld);
 		}
 	}
 

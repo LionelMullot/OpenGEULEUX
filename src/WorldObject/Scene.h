@@ -7,6 +7,12 @@
 #include <vector>
 
 #include <GL/glew.h>
+#include <glm/mat4x4.hpp>
+
+namespace utils
+{
+	class ShaderProgram;
+}
 
 namespace worldObject
 {
@@ -39,7 +45,7 @@ namespace worldObject
 	/* ********************** METHODS ********************** */
 	/* ***************************************************** */
 	public:
-		void draw(void) const;
+		void draw(const utils::ShaderProgram * p_pShaderProgram, glm::mat4& p_mObjectToWorld) const;
 
 	/* ***************************************************** */
 	/* *************** GETTER / SETTER ********************* */
