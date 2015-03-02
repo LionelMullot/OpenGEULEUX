@@ -38,6 +38,11 @@ set( UTILS_SRCS
 	 ${CMAKE_CURRENT_SOURCE_DIR}/Utils/ShaderProgram.h
 	 ${CMAKE_CURRENT_SOURCE_DIR}/Utils/QuadBlit.cpp
 	 ${CMAKE_CURRENT_SOURCE_DIR}/Utils/QuadBlit.h
+	 ${CMAKE_CURRENT_SOURCE_DIR}/Utils/imgui/imgui.cpp
+	 ${CMAKE_CURRENT_SOURCE_DIR}/Utils/imgui/imgui.h
+	 ${CMAKE_CURRENT_SOURCE_DIR}/Utils/imgui/imguiRenderGL3.cpp
+	 ${CMAKE_CURRENT_SOURCE_DIR}/Utils/imgui/imguiRenderGL3.h
+	 ${CMAKE_CURRENT_SOURCE_DIR}/Utils/imgui/stb_truetype.h
  )
 
 set( SOURCE_FILES ${SOURCE_FILES} ${UTILS_SRCS} )
@@ -109,7 +114,6 @@ ADD_DEFINITIONS( -DGLEW_STATIC=1 )
 
 include_directories( ${CMAKE_SOURCE_DIR}/external/glm ) #GLM
 include_directories( ${CMAKE_SOURCE_DIR}/external/stb ) #STB
-include_directories( ${CMAKE_SOURCE_DIR}/external/imgui ) #IMGUI
 include_directories( ${CMAKE_SOURCE_DIR}/external/glfw/include ) #GLFW
 include_directories( ${OPENGL_INCLUDE_DIR} ${GLEW_INCLUDE_DIRS} )
 

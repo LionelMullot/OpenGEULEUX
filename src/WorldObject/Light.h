@@ -48,19 +48,25 @@ namespace worldObject
 	/* ****************** GETTER AND SETTER **************** */
 	/* ***************************************************** */
 	public:
+		float * getPositionAxisValue(int axis);
 		glm::vec3 getPosition(void);
 		glm::vec3 getDirection(void);
 		glm::vec3 getColor(void);
 		float getSpecularIntensity(void);
+		float * getSpecularIntensityPtr(void);
 		float getDiffuseIntensity(void);
+		float * getDiffuseIntensityPtr(void);
 
 	}; // class Light
 
+	inline float * Light::getPositionAxisValue(int axis) { return &m_vPosition[axis]; }
 	inline glm::vec3 Light::getPosition(void) { return m_vPosition; }
 	inline glm::vec3 Light::getDirection(void) { return m_vDirection; }
 	inline glm::vec3 Light::getColor(void) { return m_vColor; }
 	inline float Light::getDiffuseIntensity(void) { return m_fDiffuseIntensity; }
+	inline float * Light::getDiffuseIntensityPtr(void) { return &m_fDiffuseIntensity; }
 	inline float Light::getSpecularIntensity(void) { return m_fSpecularIntensity; }
+	inline float * Light::getSpecularIntensityPtr(void) { return &m_fSpecularIntensity; }
 
 } //namespace worldObject
 

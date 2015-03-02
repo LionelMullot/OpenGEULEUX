@@ -1,6 +1,4 @@
 
-#include <GL/glew.h>
-
 #include "App.h"
 
 #include <cstdio>
@@ -11,6 +9,8 @@
 #include "Utils/Camera.h"
 #include "Utils/QuadBlit.h"
 #include "Utils/ShaderProgram.h"
+#include "Utils/imgui/imgui.h"
+#include "Utils/imgui/imguiRenderGL3.h"
 #include "GUIState.h"
 #include "WorldObject/Cube.h"
 #include "WorldObject/Plane.h"
@@ -25,7 +25,8 @@
 #include "glm/vec4.hpp" // glm::vec4, glm::ivec4
 #include "glm/mat4x4.hpp" // glm::mat4
 #include "glm/gtc/matrix_transform.hpp" // glm::translate, glm::rotate, glm::scale, glm::perspective
-#include "glm/gtc/type_ptr.hpp" // glm::value_ptr
+
+#define M_PI        3.14159265358979323846264338327950288f   /* pi */
 
 namespace core
 {
@@ -41,6 +42,7 @@ namespace core
 		, m_pGUIState(NULL)
 		, m_pScene(NULL)
 		, m_pQuadBlit(NULL)
+		, m_pAreaLight(NULL)
 		, m_pGbuffer(NULL)
 		, m_pBlit(NULL)
 		, m_pIllumination(NULL)
@@ -123,6 +125,12 @@ namespace core
 
 	void App::initUI(void)
 	{
+		// Init UI
+		if (!imguiRenderGLInit("../../font/DroidSans.ttf"))
+		{
+			fprintf(stderr, "Could not init GUI renderer.\n");
+			exit(EXIT_FAILURE);
+		}
 	}
 
 	void App::initCamera(void)
@@ -136,10 +144,10 @@ namespace core
 		m_pGUIState = core::GUIState::create_ptr();
 	}
 
-	void App::initRenderers(worldObject::AreaLight * areaLight)
+	void App::initRenderers(void)
 	{
 		m_pGbuffer = renderer::GBufferRenderer::create_ptr();
-		m_pIllumination = renderer::IlluminationRenderer::create_ptr(areaLight);
+		m_pIllumination = renderer::IlluminationRenderer::create_ptr(m_pAreaLight);
 		m_pBlit = renderer::BlitRenderer::create_ptr();
 	}
 
@@ -149,15 +157,15 @@ namespace core
 
 		worldObject::Cube * cube = worldObject::Cube::create_ptr();
 		worldObject::Plane * plane = worldObject::Plane::create_ptr();
-		worldObject::AreaLight * areaLight = worldObject::AreaLight::create_ptr();
+		m_pAreaLight = worldObject::AreaLight::create_ptr();
 
 		m_pScene->addObject(cube);
 		m_pScene->addObject(plane);
-		m_pScene->addObject(areaLight);
+		m_pScene->addObject(m_pAreaLight);
 
 		m_pQuadBlit = utils::QuadBlit::create_ptr();
 
-		initRenderers(areaLight);
+		initRenderers();
 	}
 
 	int32_t App::run_app(void)
@@ -271,8 +279,47 @@ namespace core
 			m_pBlit->addTextureToDraw(m_pGbuffer->getTextureId(2), 2);
 			m_pBlit->render(m_pQuadBlit);
 
+			// Draw UI
+			glDisable(GL_DEPTH_TEST);
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glViewport(0, 0, core::Config::WINDOW_WIDTH, core::Config::WINDOW_HEIGHT);
+
+			unsigned char mbut = 0;
+			int mscroll = 0;
+			double mousex; double mousey;
+			glfwGetCursorPos(m_pWindow, &mousex, &mousey);
+			mousey = core::Config::WINDOW_HEIGHT - mousey;
+
+			if (leftButton == GLFW_PRESS)
+				mbut |= IMGUI_MBUT_LEFT;
+
+			imguiBeginFrame((int)mousex, (int)mousey, mbut, mscroll);
+			int logScroll = 0;
+			imguiBeginScrollArea("Light", core::Config::WINDOW_WIDTH - 210, core::Config::WINDOW_HEIGHT - 310, 200, 300, &logScroll);
+			
+			imguiSlider("Light distance", m_pAreaLight->getDistancePtr(), 0.0f, 200.0f, 0.1f);
+			imguiSlider("Light diffuse", m_pAreaLight->getDiffuseIntensityPtr(), 0.0f, 100.0f, 1.0f);
+			imguiSlider("Light specular", m_pAreaLight->getSpecularIntensityPtr(), 0.0f, 100.0f, 1.0f);
+			imguiSlider("Light Size X", m_pAreaLight->getSizeX(), 0.0f, 100.0f, 1.0f);
+			imguiSlider("Light Size Y", m_pAreaLight->getSizeY(), 0.0f, 100.0f, 1.0f);
+			imguiSlider("Light Position X", m_pAreaLight->getPositionAxisValue(0), -15.0f, 15.0f, 0.1f);
+			imguiSlider("Light Position Y", m_pAreaLight->getPositionAxisValue(1), -15.0f, 15.0f, 0.1f);
+			imguiSlider("Light Position Z", m_pAreaLight->getPositionAxisValue(2), -15.0f, 15.0f, 0.1f);
+			imguiSlider("Light Angle X", m_pAreaLight->getAngleX(), -M_PI, M_PI, 0.1f);
+			imguiSlider("Light Angle Y", m_pAreaLight->getAngleY(), -M_PI, M_PI, 0.1f);
+			imguiSlider("Light Angle Z", m_pAreaLight->getAngleZ(), -M_PI, M_PI, 0.1f);
+			imguiEndScrollArea();
+			imguiEndFrame();
+			imguiRenderGLDraw(core::Config::WINDOW_WIDTH, core::Config::WINDOW_HEIGHT);
+
+			glDisable(GL_BLEND);
+
+
 			glfwSwapBuffers(m_pWindow);
 			glfwPollEvents();
+
+			m_pAreaLight->updateMatrix();
 
 			double newTime = glfwGetTime();
 			m_fps = 1.f / (newTime - m_t);

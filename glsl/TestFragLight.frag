@@ -56,6 +56,7 @@ vec4 AreaLightCalculation(vec3 Position, vec3 Normal, vec3 diffuseColor, vec3 sp
 	vec3 projection = projectOnPlane(Position, AreaLightPosition, AreaLightDirection);
 	vec3 dir = projection - AreaLightPosition;
 
+	 //calculate distance from area
 	vec2 diagonal = vec2( dot(dir, AreaLightRight), dot(dir, AreaLightUp) );
 	vec2 nearest2D = vec2( clamp(diagonal.x, -AreaLightSize.x, AreaLightSize.x), clamp(diagonal.y, -AreaLightSize.y, AreaLightSize.y) );
 	vec3 nearestPointInside = AreaLightPosition + (AreaLightRight * nearest2D.x + AreaLightUp * nearest2D.y);
@@ -65,34 +66,49 @@ vec4 AreaLightCalculation(vec3 Position, vec3 Normal, vec3 diffuseColor, vec3 sp
 
 	vec3 lVector = normalize(nearestPointInside - Position);
 
-	float attenuation = 1.0 / pow(dist,2);
+	float attenuation = 1.0 / pow(dist,3);
+/*
+	//Normal 
+	float lDistance = 1.0 - clamp(dist/AreaLightDistance, 0.0, 1.0);
 
-	float NdotL = clamp( dot(Normal, lVector), 0.0, 1.0 );
+	//Weighting
+	float areaFactor = AreaLightSize.x * AreaLightSize.y;
+
+	float NdotL = clamp( dot(Normal, -lVector), 0.0, 1.0 );
+	//Make lighting Smoother
+	NdotL = NdotL * NdotL * NdotL;
 
 	float LNdotL = clamp( ( dot(-AreaLightDirection, lVector) * 2.0 - 1.0 ), 0.0, 1.0 );
-	LNdotL = LNdotL * NdotL;
+	LNdotL = LNdotL * NdotL * areaFactor;
+*/
+	float NdotL = dot(AreaLightDirection, -lVector);
 
 	// Looking at the plane ?
-	if( LNdotL > 0.0 && sideOfPlane(Position, AreaLightPosition, AreaLightDirection) == 1 )
+	if( NdotL > 0.0 && sideOfPlane(Position, AreaLightPosition, AreaLightDirection) == 1 )
 	{
-		// Diffuse Factor
-		vec3 lWeightDiffuse = vec3( LNdotL );
-		diffuse = ( (AreaLightColor.rgb * lWeightDiffuse) * attenuation) * AreaLightDiffuseIntensity;
-
 		// Specular Factor
-		vec3 r = -reflect(lVector, Normal);
+		vec3 r = reflect(normalize(-Position), Normal);
 		r = normalize(r);
+		vec3 e = linePlaneIntersect(Position, r, AreaLightPosition, AreaLightDirection);
 
-		float lWeightSpecular = pow( max(0.0, dot(r, Normal)), 20.0);
+		float specAngle = dot(r, AreaLightDirection);
+		if(specAngle > 0.0)
+		{
+			vec3 dirSpec = e - AreaLightPosition;
+			vec2 dirSpec2D = vec2(dot(dirSpec, AreaLightRight), dot(dirSpec, AreaLightUp));
+			vec2 nearestSpec2D = vec2(clamp( dirSpec2D.x, - AreaLightSize.x, AreaLightSize.x), clamp( dirSpec2D.y, - AreaLightSize.y, AreaLightSize.y));
+			float specFactor = 1.0 - clamp(length(nearestSpec2D- dirSpec2D)*20.0, 0.0, 1.0);
+			specular = AreaLightColor.rgb * AreaLightSpecularIntensity * specFactor * specAngle;
+		}
 
-		specular = (AreaLightColor.rgb * lWeightSpecular * attenuation) * AreaLightSpecularIntensity;
+		diffuse = AreaLightColor.rgb * AreaLightDiffuseIntensity * NdotL;
 	}
 
 	//return vec4(dir, 1.0);
 	//return vec4( AreaLightDirection, 1.0 );
 	//return vec4(vec3(nearestPointInside),1.0);
-	//return vec4( vec3(diffuse * diffuseColor), 1.0);
-	return vec4( vec3((diffuse * diffuseColor) + (specular * specularColor)) , 1.0 );
+	return vec4( vec3(diffuse * diffuseColor), 1.0);
+	//return vec4( vec3((diffuse * diffuseColor) + (specular * specularColor)) , 1.0 );
 }
 
 void main(void)

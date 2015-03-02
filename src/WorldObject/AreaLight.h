@@ -28,6 +28,9 @@ namespace worldObject
 		glm::vec3	m_vRight;
 		glm::vec2	m_vSize;
 		float		m_fDistance;
+		float		m_fAngleX;
+		float		m_fAngleY;
+		float		m_fAngleZ;
 
 	/* ***************************************************** */
 	/* ************* CONSTUCTION AND DESTUCTION ************ */
@@ -50,7 +53,7 @@ namespace worldObject
 		virtual void draw(const utils::ShaderProgram * p_pShaderProgram, glm::mat4& p_mObjectToWorld) const;
 
 		void initData(void);
-		void updateData(void);
+		void updateMatrix(void);
 
 	/* ***************************************************** */
 	/* ****************** GETTER AND SETTER **************** */
@@ -59,14 +62,26 @@ namespace worldObject
 		glm::vec3 getUp(void);
 		glm::vec3 getRight(void);
 		glm::vec2 getSize(void);
+		float * getSizeX(void);
+		float * getSizeY(void);
 		float getDistance(void);
+		float * getDistancePtr(void);
+		float * getAngleX(void);
+		float * getAngleY(void);
+		float * getAngleZ(void);
 
 	}; // class AreaLight
 
 	inline glm::vec3 AreaLight::getUp(void) { return m_vUp; }
 	inline glm::vec3 AreaLight::getRight(void) { return m_vRight; }
 	inline glm::vec2 AreaLight::getSize(void) { return glm::vec2(m_vSize.x * .5, m_vSize.y * .5); }
+	inline float * AreaLight::getSizeX(void) { return &m_vSize.x; }
+	inline float * AreaLight::getSizeY(void) { return &m_vSize.y; }
 	inline float AreaLight::getDistance(void) { return m_fDistance; }
+	inline float * AreaLight::getDistancePtr(void) { return &m_fDistance; }
+	inline float * AreaLight::getAngleX(void) { return &m_fAngleX; }
+	inline float * AreaLight::getAngleY(void) { return &m_fAngleY; }
+	inline float * AreaLight::getAngleZ(void) { return &m_fAngleZ; }
 
 } //namespace worldObject
 

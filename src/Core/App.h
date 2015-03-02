@@ -5,6 +5,7 @@
 
 #include <cstdint>
 
+#include <GL\glew.h>
 #include <GLFW\glfw3.h>
 
 namespace utils
@@ -44,6 +45,7 @@ namespace core
 		core::GUIState *		m_pGUIState;
 		worldObject::Scene *	m_pScene;
 		utils::QuadBlit	*		m_pQuadBlit;
+		worldObject::AreaLight *m_pAreaLight;
 
 		// Renderer variables
 		renderer::GBufferRenderer *			m_pGbuffer;
@@ -72,7 +74,7 @@ namespace core
 		void initUI(void);
 		void initCamera(void);
 		void initGUIState(void);
-		void initRenderers(worldObject::AreaLight * areaLight);
+		void initRenderers(void);
 		void initScene(void);
 		void initApp(int argc, char** argv);
 
