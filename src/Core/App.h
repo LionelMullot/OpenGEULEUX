@@ -20,6 +20,7 @@ namespace renderer
 	class GBufferRenderer;
 	class BlitRenderer;
 	class IlluminationRenderer;
+	class ShadowRenderer;
 }
 
 namespace worldObject
@@ -51,6 +52,7 @@ namespace core
 		renderer::GBufferRenderer *			m_pGbuffer;
 		renderer::BlitRenderer *			m_pBlit;
 		renderer::IlluminationRenderer *	m_pIllumination;
+		renderer::ShadowRenderer *			m_pShadowBuffer;
 
 	/* ***************************************************** */
 	/* ************* CONSTUCTION AND DESTUCTION ************ */

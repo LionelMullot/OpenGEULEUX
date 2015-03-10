@@ -80,7 +80,7 @@ namespace worldObject
 	{
 	}
 
-	void Plane::draw(const utils::ShaderProgram * p_pShaderProgram, glm::mat4& p_mObjectToWorld) const
+	void Plane::draw(const utils::ShaderProgram * p_pShaderProgram, const glm::mat4& p_mObjectToWorld) const
 	{
 		glBindVertexArray(m_idVao);
 		glDrawElementsInstanced(GL_TRIANGLES, m_iTriangleCount * 3, GL_UNSIGNED_INT, (void*)0, 1);

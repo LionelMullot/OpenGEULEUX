@@ -26,6 +26,9 @@ namespace worldObject
 	Light::Light() 
 		: m_fDiffuseIntensity(0)
 		, m_fSpecularIntensity(0)
+		, m_vPosition(glm::vec3(0))
+		, m_vDirection(glm::vec3(0))
+		, m_vColor(glm::vec3(0))
 	{}
 
 	Light::~Light() {}

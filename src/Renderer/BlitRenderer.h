@@ -25,7 +25,7 @@ namespace renderer
 		/* ********************** MEMBERS ********************** */
 		/* ***************************************************** */
 	public:
-		const static int nbFBO = 3;
+		const static int nbFBO = 4;
 	
 	protected:
 		GLuint					m_tTexture[nbFBO];

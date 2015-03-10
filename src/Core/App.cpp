@@ -19,6 +19,7 @@
 #include "Renderer/GBufferRenderer.h"
 #include "Renderer/BlitRenderer.h"
 #include "Renderer/IlluminationRenderer.h"
+#include "Renderer/ShadowRenderer.h"
 
 #include "glm/glm.hpp"
 #include "glm/vec3.hpp" // glm::vec3
@@ -27,6 +28,8 @@
 #include "glm/gtc/matrix_transform.hpp" // glm::translate, glm::rotate, glm::scale, glm::perspective
 
 #define M_PI        3.14159265358979323846264338327950288f   /* pi */
+#define UI 1
+#define BLITRENDER 1
 
 namespace core
 {
@@ -46,6 +49,7 @@ namespace core
 		, m_pGbuffer(NULL)
 		, m_pBlit(NULL)
 		, m_pIllumination(NULL)
+		, m_pShadowBuffer(NULL)
 	{}
 
 	App::~App(void)
@@ -149,6 +153,7 @@ namespace core
 		m_pGbuffer = renderer::GBufferRenderer::create_ptr();
 		m_pIllumination = renderer::IlluminationRenderer::create_ptr(m_pAreaLight);
 		m_pBlit = renderer::BlitRenderer::create_ptr();
+		m_pShadowBuffer = renderer::ShadowRenderer::create_ptr();
 	}
 
 	void App::initScene(void)
@@ -258,6 +263,14 @@ namespace core
 			// Compute the inverse worldToScreen matrix
 			glm::mat4 screenToWorld = glm::transpose(glm::inverse(mvp));
 
+			// Light space matrices
+			// From light space to shadow map screen space
+			glm::mat4 projectionLight = glm::perspective(180.f, 1.f, 1.f, 100.f);
+			// From world to light
+			glm::mat4 worldToLight = glm::lookAt(m_pAreaLight->getPosition(), m_pAreaLight->getPosition() + m_pAreaLight->getDirection(), glm::vec3(0.f, 0.f, -1.f));
+			// From world to shadow map screen space 
+			glm::mat4 worldToLightScreen = projectionLight * worldToLight;
+
 			// Clear the front buffer
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -267,18 +280,27 @@ namespace core
 			// RENDER GBUFFEROBJECT
 			m_pGbuffer->render(m_pScene, projection, worldToView, objectToWorld);
 
+			// RENDER SHADOW
+			m_pShadowBuffer->render(m_pScene, projectionLight, worldToLight, objectToWorld);
+
 			// RENDER ILLUMINATION
 			m_pIllumination->addTextureToDraw(m_pGbuffer->getTextureId(0), 0);
 			m_pIllumination->addTextureToDraw(m_pGbuffer->getTextureId(1), 1);
 			m_pIllumination->addTextureToDraw(m_pGbuffer->getTextureId(2), 2);
-			m_pIllumination->render(m_pQuadBlit, vCameraPosition, screenToWorld);
-	
+			m_pIllumination->addTextureToDraw(m_pShadowBuffer->getTexture(), 3);
+			m_pIllumination->addTextureToDraw(m_pAreaLight->getTexture(), 4);
+			m_pIllumination->render(m_pQuadBlit, vCameraPosition, screenToWorld, worldToLightScreen);
+
+#if BLITRENDER
 			// RENDER BLIT QUADS
 			m_pBlit->addTextureToDraw(m_pGbuffer->getTextureId(0), 0);
 			m_pBlit->addTextureToDraw(m_pGbuffer->getTextureId(1), 1);
 			m_pBlit->addTextureToDraw(m_pGbuffer->getTextureId(2), 2);
+			m_pBlit->addTextureToDraw(m_pShadowBuffer->getTexture(), 3);
 			m_pBlit->render(m_pQuadBlit);
+#endif
 
+#if UI
 			// Draw UI
 			glDisable(GL_DEPTH_TEST);
 			glEnable(GL_BLEND);
@@ -298,7 +320,6 @@ namespace core
 			int logScroll = 0;
 			imguiBeginScrollArea("Light", core::Config::WINDOW_WIDTH - 210, core::Config::WINDOW_HEIGHT - 310, 200, 300, &logScroll);
 			
-			imguiSlider("Light distance", m_pAreaLight->getDistancePtr(), 0.0f, 200.0f, 0.1f);
 			imguiSlider("Light diffuse", m_pAreaLight->getDiffuseIntensityPtr(), 0.0f, 100.0f, 1.0f);
 			imguiSlider("Light specular", m_pAreaLight->getSpecularIntensityPtr(), 0.0f, 100.0f, 1.0f);
 			imguiSlider("Light Size X", m_pAreaLight->getSizeX(), 0.0f, 100.0f, 1.0f);
@@ -314,7 +335,7 @@ namespace core
 			imguiRenderGLDraw(core::Config::WINDOW_WIDTH, core::Config::WINDOW_HEIGHT);
 
 			glDisable(GL_BLEND);
-
+#endif
 
 			glfwSwapBuffers(m_pWindow);
 			glfwPollEvents();

@@ -32,8 +32,7 @@ namespace worldObject
 	/* ********************** METHODS ********************** */
 	/* ***************************************************** */
 	public:
-		virtual void draw(const utils::ShaderProgram * p_pShaderProgram, glm::mat4& p_mObjectToWorld) const;
-
+		virtual void draw(const utils::ShaderProgram * p_pShaderProgram, const glm::mat4& p_mObjectToWorld) const;
 
 	}; // class Plane
 

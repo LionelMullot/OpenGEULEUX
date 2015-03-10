@@ -45,14 +45,13 @@ namespace worldObject
 	/* ********************** METHODS ********************** */
 	/* ***************************************************** */
 	public:
-		void draw(const utils::ShaderProgram * p_pShaderProgram, glm::mat4& p_mObjectToWorld) const;
+		void draw(const utils::ShaderProgram * p_pShaderProgram, const glm::mat4& p_mObjectToWorld) const;
 
 	/* ***************************************************** */
 	/* *************** GETTER / SETTER ********************* */
 	/* ***************************************************** */
 	public:
 		void addObject(Object3D * p_pObject);
-	
 
 	}; // class Scene
 

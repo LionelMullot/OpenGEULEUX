@@ -50,7 +50,7 @@ namespace worldObject
 	/* ********************** METHODS ********************** */
 	/* ***************************************************** */
 	public:
-		virtual void draw(const utils::ShaderProgram * p_pShaderProgram, glm::mat4& p_mObjectToWorld) const = 0;
+		virtual void draw(const utils::ShaderProgram * p_pShaderProgram, const glm::mat4& p_mObjectToWorld) const = 0;
 
 	}; // class Object3D
 

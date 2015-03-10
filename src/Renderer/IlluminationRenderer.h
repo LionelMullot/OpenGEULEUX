@@ -27,13 +27,16 @@ namespace renderer
 		/* ***************************************************** */
 	protected:
 		utils::ShaderProgram *		m_pShaderProgram;
-		GLuint						m_tTexture[3];
+		GLuint						m_tTexture[5];
 		worldObject::AreaLight *	m_pAreaLight;
 		// Uniforms
 		GLuint	m_glColorBufferLocation;
 		GLuint	m_glNormalBufferLocation;
 		GLuint	m_glDepthBufferLocation;
+		GLuint	m_glShadowTextureLocation;
+		GLuint  m_glLightTextureLocation;
 		GLuint	m_glScreenToWorldLocation;
+		GLuint	m_glWorldToLightScreenLocation;
 		GLuint	m_glCameraViewLocation;
 		// Area Light Uniforms
 		GLuint	m_glAreaLightPositionLocation;
@@ -44,7 +47,6 @@ namespace renderer
 		GLuint	m_glAreaLightColorLocation;
 		GLuint	m_glAreaLightDiffuseIntensityLocation;
 		GLuint	m_glAreaLightSpecularIntensityLocation;
-		GLuint	m_glAreaLightDistanceLocation;
 
 		/* ***************************************************** */
 		/* ************* CONSTUCTION AND DESTUCTION ************ */
@@ -64,7 +66,7 @@ namespace renderer
 		/* ********************** METHODS ********************** */
 		/* ***************************************************** */
 	public:
-		void render(const utils::QuadBlit * p_pQuadBlit, const glm::vec3& vCameraPosition, const glm::mat4& screenToWorld);
+		void render(const utils::QuadBlit * p_pQuadBlit, const glm::vec3& vCameraPosition, const glm::mat4& screenToWorld, const glm::mat4& worldToLightScreen);
 
 		/* ***************************************************** */
 		/* *************** GETTER / SETTER ********************* */

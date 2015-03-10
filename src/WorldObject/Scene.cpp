@@ -42,7 +42,7 @@ namespace worldObject
 		}
 	}
 
-	void Scene::draw(const utils::ShaderProgram * p_pShaderProgram, glm::mat4& p_mObjectToWorld) const
+	void Scene::draw(const utils::ShaderProgram * p_pShaderProgram, const glm::mat4& p_mObjectToWorld) const
 	{
 		for (Object3D* p_object : m_pObject3D)
 		{

@@ -78,7 +78,9 @@ set( RENDERER_SRCS
 	 ${CMAKE_CURRENT_SOURCE_DIR}/Renderer/BlitRenderer.cpp
 	 ${CMAKE_CURRENT_SOURCE_DIR}/Renderer/BlitRenderer.h
 	 ${CMAKE_CURRENT_SOURCE_DIR}/Renderer/IlluminationRenderer.cpp
-	 ${CMAKE_CURRENT_SOURCE_DIR}/Renderer/IlluminationRenderer.h )
+	 ${CMAKE_CURRENT_SOURCE_DIR}/Renderer/IlluminationRenderer.h
+	 ${CMAKE_CURRENT_SOURCE_DIR}/Renderer/ShadowRenderer.cpp
+	 ${CMAKE_CURRENT_SOURCE_DIR}/Renderer/ShadowRenderer.h )
 
 set( SOURCE_FILES ${SOURCE_FILES} ${RENDERER_SRCS} )
 

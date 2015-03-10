@@ -53,15 +53,15 @@ namespace utils
 		/* *********************** GETTER ********************** */
 		/* ***************************************************** */
 	public:
-		glm::vec3 getWhereILook(void);
-		glm::vec3 getOrigin(void);
-		glm::vec3 getUp(void);
+		const glm::vec3& getWhereILook(void) const;
+		const glm::vec3& getOrigin(void) const;
+		const glm::vec3& getUp(void) const;
 
 	}; // class Camera
 	
-	inline glm::vec3 Camera::getWhereILook(void){ return m_vEye; }
-	inline glm::vec3 Camera::getOrigin(void){ return m_vOrigin; }
-	inline glm::vec3 Camera::getUp(void){ return m_vUp;  }
+	inline const glm::vec3& Camera::getWhereILook(void) const { return m_vEye; }
+	inline const glm::vec3& Camera::getOrigin(void) const { return m_vOrigin; }
+	inline const glm::vec3& Camera::getUp(void) const { return m_vUp; }
 
 }; // namespace Utils
 

@@ -1,7 +1,7 @@
 
 #pragma once
-#ifndef __RENDERER_GBUFFER_H__
-#define __RENDERER_GBUFFER_H__
+#ifndef __RENDERER_SHADOW_H__
+#define __RENDERER_SHADOW_H__
 
 #include <GL/glew.h>
 #include <glm/matrix.hpp>
@@ -14,39 +14,37 @@ namespace utils
 namespace worldObject
 {
 	class Scene;
+	class AreaLight;
 }
 
 namespace renderer
 {
-	class GBufferRenderer
+	class ShadowRenderer
 	{
+	const int RESOLUTION = 4096;
 
 		/* ***************************************************** */
 		/* ********************** MEMBERS ********************** */
 		/* ***************************************************** */
 	protected:
-		GLuint					m_glGBufferObject;
-		GLuint					m_glGBufferObjectTextures[3];
-		GLuint					m_glGBufferObjectDrawTextures[2];
-		utils::ShaderProgram *	m_pShaderProgram;
-
+		GLuint						m_glBufferObject;
+		utils::ShaderProgram *		m_pShaderProgram;
+		GLuint						m_glRenderBuffer;
+		GLuint						m_glTexture;
 		// Uniforms
 		GLuint	m_glProjectionMatrixLocation;
 		GLuint	m_glWorldToViewMatrixLocation;
-		GLuint	m_glDiffuseTextureLocation;
-		GLuint	m_glSpecularTextureLocation;
-		GLuint	m_glSpecularPowerLocation;
 
 		/* ***************************************************** */
 		/* ************* CONSTUCTION AND DESTUCTION ************ */
 		/* ***************************************************** */
 	public:
-		static GBufferRenderer * create_ptr(void);
-		static void release_ptr(GBufferRenderer * ptr);
+		static ShadowRenderer * create_ptr(void);
+		static void release_ptr(ShadowRenderer * ptr);
 
 	protected:
-		GBufferRenderer(void);
-		~GBufferRenderer(void);
+		ShadowRenderer(void);
+		~ShadowRenderer(void);
 
 		void init(void);
 		void release(void);
@@ -60,12 +58,12 @@ namespace renderer
 		/* ***************************************************** */
 		/* *************** GETTER / SETTER ********************* */
 		/* ***************************************************** */
-		const GLuint getTextureId(int index) const;
+		const GLuint getTexture() const;
 
-	}; // class GBufferRenderer
+	}; // class ShadowRenderer
 
-	inline const GLuint GBufferRenderer::getTextureId(int index) const { return m_glGBufferObjectTextures[index]; }
+	inline const GLuint ShadowRenderer::getTexture() const { return m_glTexture; }
 
 }; // namespace renderer
 
-#endif //__RENDERER_GBUFFER_H__
+#endif //__RENDERER_SHADOW_H__

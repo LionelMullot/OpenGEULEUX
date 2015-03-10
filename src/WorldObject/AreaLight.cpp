@@ -3,6 +3,7 @@
 #include "Utils/ShaderProgram.h"
 #include <cassert>
 #include <iostream>
+#include "stb_image.h"
 
 #define M_PI        3.14159265358979323846264338327950288f   /* pi */
 #define M_PI_2      1.57079632679489661923132169163975144f  /* pi/2 */
@@ -10,7 +11,7 @@
 
 namespace worldObject
 {
-	AreaLight* AreaLight::create_ptr(void)
+	AreaLight * AreaLight::create_ptr(void)
 	{
 		AreaLight * ptr = new AreaLight();
 		ptr->init();
@@ -35,7 +36,6 @@ namespace worldObject
 	, m_vUp(glm::vec3(0.0f))
 	, m_vRight(glm::vec3(0.0f))
 	, m_vSize(glm::vec2(0.0f))
-	, m_fDistance(0.0f)
 	, m_fAngleX(0.0f)
 	, m_fAngleY(0.0f)
 	, m_fAngleZ(0.0f)
@@ -49,7 +49,6 @@ namespace worldObject
 
 		m_vPosition = glm::vec3(0, 1, 0);
 		m_vSize = glm::vec2(1, 1);
-		m_fDistance = 8.0f;
 
 		m_fDiffuseIntensity = 10.0f;
 		m_fSpecularIntensity = 10.0f;
@@ -60,6 +59,21 @@ namespace worldObject
 		m_mTranslation[0] = glm::vec4(1, 0, 0, 0);
 		m_mTranslation[1] = glm::vec4(0, 1, 0, 0);
 		m_mTranslation[2] = glm::vec4(0, 0, 1, 0);
+
+		// Load image
+		int x;
+		int y;
+		int comp;
+		unsigned char * diffuse = stbi_load("../../textures/flappy.png", &x, &y, &comp, 3);
+
+		// Create Texture for the cube
+		glGenTextures(1, &m_Textures[0]);
+		glBindTexture(GL_TEXTURE_2D, m_Textures[0]);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, x, y, 0, GL_RGB, GL_UNSIGNED_BYTE, diffuse);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 		initData();
 		updateMatrix();
@@ -204,9 +218,12 @@ namespace worldObject
 		m_vDirection = glm::normalize(glm::vec3(col3.x, col3.y, col3.z));
 	}
 
-	void AreaLight::draw(const utils::ShaderProgram * p_pShaderProgram, glm::mat4& p_mObjectToWorld) const
+	void AreaLight::draw(const utils::ShaderProgram * p_pShaderProgram, const glm::mat4& p_mObjectToWorld) const
 	{
 		p_pShaderProgram->setUniform(p_pShaderProgram->getUniformIndex("ObjectToWorld"), m_mObjectModel);
+
+		glActiveTexture(0);
+		glBindTexture(GL_TEXTURE_2D, 0);
 		glBindVertexArray(m_idVao);
 		glDrawElementsInstanced(GL_TRIANGLES, m_iTriangleCount * 3, GL_UNSIGNED_INT, (void*)0, 1);
 		glBindVertexArray(0);

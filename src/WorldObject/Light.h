@@ -42,31 +42,31 @@ namespace worldObject
 	/* ********************** METHODS ********************** */
 	/* ***************************************************** */
 	public:
-		virtual void draw(const utils::ShaderProgram * p_pShaderProgram, glm::mat4& p_mObjectToWorld) const {};
+		virtual void draw(const utils::ShaderProgram * p_pShaderProgram, const glm::mat4& p_mObjectToWorld) const {};
 		
 	/* ***************************************************** */
 	/* ****************** GETTER AND SETTER **************** */
 	/* ***************************************************** */
 	public:
-		float * getPositionAxisValue(int axis);
-		glm::vec3 getPosition(void);
-		glm::vec3 getDirection(void);
-		glm::vec3 getColor(void);
-		float getSpecularIntensity(void);
-		float * getSpecularIntensityPtr(void);
-		float getDiffuseIntensity(void);
-		float * getDiffuseIntensityPtr(void);
+		float * const getPositionAxisValue(int axis);
+		const glm::vec3& getPosition(void) const;
+		const glm::vec3& getDirection(void) const;
+		const glm::vec3& getColor(void) const;
+		const float getSpecularIntensity(void) const;
+		float * const getSpecularIntensityPtr(void);
+		const float getDiffuseIntensity(void) const;
+		float * const getDiffuseIntensityPtr(void);
 
 	}; // class Light
 
-	inline float * Light::getPositionAxisValue(int axis) { return &m_vPosition[axis]; }
-	inline glm::vec3 Light::getPosition(void) { return m_vPosition; }
-	inline glm::vec3 Light::getDirection(void) { return m_vDirection; }
-	inline glm::vec3 Light::getColor(void) { return m_vColor; }
-	inline float Light::getDiffuseIntensity(void) { return m_fDiffuseIntensity; }
-	inline float * Light::getDiffuseIntensityPtr(void) { return &m_fDiffuseIntensity; }
-	inline float Light::getSpecularIntensity(void) { return m_fSpecularIntensity; }
-	inline float * Light::getSpecularIntensityPtr(void) { return &m_fSpecularIntensity; }
+	inline float * const Light::getPositionAxisValue(int axis) { return &m_vPosition[axis]; }
+	inline const glm::vec3& Light::getPosition(void) const { return m_vPosition; }
+	inline const glm::vec3& Light::getDirection(void) const { return m_vDirection; }
+	inline const glm::vec3& Light::getColor(void) const { return m_vColor; }
+	inline const float Light::getDiffuseIntensity(void) const { return m_fDiffuseIntensity; }
+	inline float * const Light::getDiffuseIntensityPtr(void) { return &m_fDiffuseIntensity; }
+	inline const float Light::getSpecularIntensity(void) const { return m_fSpecularIntensity; }
+	inline float * const Light::getSpecularIntensityPtr(void) { return &m_fSpecularIntensity; }
 
 } //namespace worldObject
 
