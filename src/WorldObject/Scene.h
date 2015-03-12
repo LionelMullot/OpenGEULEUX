@@ -52,6 +52,7 @@ namespace worldObject
 	/* ***************************************************** */
 	public:
 		void addObject(Object3D * p_pObject);
+		void removeLastObjectAdd();
 
 	}; // class Scene
 

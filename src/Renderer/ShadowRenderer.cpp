@@ -80,6 +80,9 @@ namespace renderer
 		// Color needs to be 0 outside of texture coordinates
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+		// PCF
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
 
 		// Attach the shadow texture to the depth attachment
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_glTexture, 0);
@@ -121,8 +124,10 @@ namespace renderer
 			m_pShaderProgram->setUniform(m_glProjectionMatrixLocation, p_mProjection);
 			m_pShaderProgram->setUniform(m_glWorldToViewMatrixLocation, p_mWorldToView);
 
+			// PeterPanning
+			glCullFace(GL_FRONT);
 			p_pScene->draw(m_pShaderProgram, p_mObjectToWorld);
-
+			glCullFace(GL_BACK);
 			// Fallback to default framebuffer
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			// Revert to window size viewport

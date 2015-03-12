@@ -8,7 +8,7 @@ in block
 uniform sampler2D ColorBuffer;
 uniform sampler2D NormalBuffer;
 uniform sampler2D DepthBuffer;
-uniform sampler2D ShadowTexture;
+uniform sampler2DShadow ShadowTexture;
 uniform sampler2D LightTexture;
 
 uniform vec3 CameraView;
@@ -25,12 +25,13 @@ uniform float AreaLightDiffuseIntensity;
 uniform float AreaLightSpecularIntensity;
 uniform float AreaLightDistance;
 
-layout(location = 0) out vec4 Color;
+uniform vec3 ShadowTexelSize;
+uniform float ShadowBias;
 
-float interpolF(float y1, float y2, float x1, float x2, float x)
-{
-	return (y1 + (y2 - y1) * ( (x - x1) / (x2 - x1) ) );
-}
+precision highp float;
+precision highp int;
+
+layout(location = 0) out vec4 Color;
 
 vec3 projectOnPlane(vec3 p, vec3 pc, vec3 pn)
 {
@@ -74,21 +75,26 @@ vec4 AreaLightCalculation(vec3 Position, vec3 Normal, vec3 diffuseColor, vec3 sp
 
 	vec3 lVector = normalize(nearestPointInside - Position);
 
+	float areaFactor = AreaLightSize.x * AreaLightSize.y;
+
 	float attenuation = 1.0 / (dist + pow(dist, 3) + pow(dist,2));
 
 	float NdotL = clamp( dot(Normal, lVector), 0.0, 1.0 );
+	// Make lighting Smoother
+	NdotL = NdotL * NdotL * NdotL;
 
 	float LNdotL = clamp( ( dot(-AreaLightDirection, lVector) * 2.0 - 1.0 ), 0.0, 1.0 );
-	LNdotL = LNdotL * NdotL;
+	LNdotL = LNdotL * NdotL * areaFactor;
 
 	// Looking at the plane ?
 	if( LNdotL > 0.0 && sideOfPlane(Position, AreaLightPosition, AreaLightDirection) == 1 )
 	{
-		vec3 lightTextBuffer = texture2D(LightTexture, vec2(LNdotL, LNdotL)).rgb;
+		//vec3 lightTextBuffer = texture2D(LightTexture, reflect(Position, lVector).xz).rgb;
 
 		// Diffuse Factor
 		vec3 lWeightDiffuse = vec3( LNdotL );
-		diffuse = ( (lightTextBuffer * lWeightDiffuse) * attenuation) * AreaLightDiffuseIntensity;
+		//diffuse = lightTextBuffer * lWeightDiffuse * attenuation * AreaLightDiffuseIntensity;
+		diffuse = AreaLightColor * lWeightDiffuse * attenuation * AreaLightDiffuseIntensity;
 
 		// Specular Factor
 		vec3 r = -reflect(lVector, Normal);
@@ -96,16 +102,102 @@ vec4 AreaLightCalculation(vec3 Position, vec3 Normal, vec3 diffuseColor, vec3 sp
 
 		float lWeightSpecular = pow( max(0.0, dot(r, Normal)), 20.0);
 
-		specular = (lightTextBuffer * lWeightSpecular * attenuation) * AreaLightSpecularIntensity;
+		//specular = LightTexture * lWeightSpecular * attenuation * AreaLightSpecularIntensity;
+		specular = AreaLightColor * lWeightSpecular * attenuation * AreaLightSpecularIntensity;
 	}
 
-	//return vec4(vec2(nearest2D), 0.0, 1.0);
-	//return vec4(LNdotL, 0.0, 0.0, 1.0);
-	//return vec4(vec3(nearestPointInside),1.0);
-	//return vec4( vec3(LNdotL), 1.0);
-	//return vec4( vec3(diffuse * diffuseColor), 1.0);
-	//return vec4(lightTextBuffer, 1.0);
 	return vec4( vec3((diffuse * diffuseColor) + (specular * specularColor)), 1.0 );
+}
+
+float SampleShadowMap(vec2 coords, float zcoord)
+{
+	return textureProj(ShadowTexture, vec4(coords.xy, zcoord - ShadowBias, 1.0), 0.0); 	
+}
+
+float SampleShadowMapLinear(vec2 coords, float zcoord, vec2 texelSize)
+{
+	vec2 pixelPos = (coords.xy / texelSize.xy) + vec2(0.5);
+	vec2 fracPart = fract(pixelPos);
+	vec2 startTexel = (pixelPos - fracPart) * texelSize;
+
+	float blTexel = SampleShadowMap(startTexel, zcoord); // Bottom left
+	float brTexel = SampleShadowMap(startTexel + vec2(texelSize.x, 0.0), zcoord); // Bottom right
+	float tlTexel = SampleShadowMap(startTexel + vec2(0.0, texelSize.y), zcoord); // Top left
+	float trTexel = SampleShadowMap(startTexel + texelSize, zcoord); // Top right
+
+	float mixA = mix(blTexel, tlTexel, fracPart.y);
+	float mixB = mix(brTexel, trTexel, fracPart.y);
+
+	return mix(mixA, mixB, fracPart.x);
+}
+
+const float BLOCKER_STEP_COUNT = 4.0f;
+const float NUM_SAMPLES = 4.0f;
+
+float SampleShadowMapPCF(vec3 coords, vec2 texelSize, vec2 penumbra)
+{
+	const float SAMPLES_START = (NUM_SAMPLES - 1.0f)/2.0f;
+	const float NUM_SAMPLES_SQUARED = NUM_SAMPLES*NUM_SAMPLES;
+
+	float result = 0.0f;
+	for(float y = -SAMPLES_START; y <= SAMPLES_START; y += 1.0f)
+	{
+		for(float x = -SAMPLES_START; x <= SAMPLES_START; x += 1.0f)
+		{
+			vec2 coordsOffset = vec2(x, y) * texelSize;
+			result += SampleShadowMapLinear( (coords.xy + coordsOffset), coords.z, texelSize);
+		}
+	}
+
+	return result / NUM_SAMPLES_SQUARED;
+}
+
+float FindBlocker(vec3 coords, float distanceToLight, vec2 texelSize)
+{
+	float blockerSum = 0.0;
+	float blockerCount = 0.0;
+ 	float shadowDepth;
+
+ 	vec2 widthSearch = (distanceToLight - 0.1) * AreaLightSize / distanceToLight;
+ 	vec2 stepUV = widthSearch / BLOCKER_STEP_COUNT;
+
+    // iterate through search region and add up depth values
+    for(float x = -BLOCKER_STEP_COUNT; x <= BLOCKER_STEP_COUNT; x += 1.0)
+	{
+        for(float y = -BLOCKER_STEP_COUNT; y < BLOCKER_STEP_COUNT; y += 1.0)
+	    {
+	    	vec2 coordsOffset = vec2(x, y) * stepUV;
+        	shadowDepth = SampleShadowMap(coords.xy + coordsOffset, coords.z);   
+ 			
+ 			// found a blocker
+            if(distanceToLight > shadowDepth)
+		    {
+                blockerSum += shadowDepth;
+             	blockerCount += 1.0;
+            }
+        }
+    }
+
+	return (blockerSum / blockerCount);
+}
+
+vec2 EstimatePenumbra(float dReceiver, float dBlocker)
+{
+    return ( (AreaLightSize * (dReceiver - dBlocker)) / dBlocker );
+}
+
+float SampleShadowMapPCSS(vec3 coords, float distanceToLight, vec2 texelSize)
+{
+	float blocker = FindBlocker(coords, distanceToLight, texelSize);
+
+    // Early out if no blocker found
+	if(blocker == 0.0){ return 1.0; }
+
+	vec2 penumbra = EstimatePenumbra(coords.z, blocker);
+
+	float shadowDepth = SampleShadowMapPCF(coords, texelSize, penumbra);
+
+	return shadowDepth;
 }
 
 void main(void)
@@ -120,6 +212,11 @@ void main(void)
 	vec3 specularColor = colorBuffer.aaa;
 	float specularPower = normalBuffer.a;
 
+	// Compute ambient color
+	vec3 ambient = vec3(1.0, 1.0, 1.0);
+	float ambientFactor = 0.12;
+	vec3 ambientColor = vec3( ambient * ambientFactor * diffuseColor );
+
 	// Convert texture coordinates into screen space coordinates
 	vec2 xy = In.Texcoord * 2.0 - 1.0;
 	// Convert depth to -1,1 range and multiply the point by ScreenToWorld matrix
@@ -127,40 +224,30 @@ void main(void)
 	// Divide by w
 	vec3 position = vec3(wP.xyz / wP.w);
 
-	vec3 n = normalize(normalBuffer.rgb);
-	vec3 v = -normalize(position);
+	vec3 normal = normalize(normalBuffer.rgb);
 
-	Color = AreaLightCalculation(position, n, diffuseColor, specularColor);
+	Color = AreaLightCalculation(position, normal, diffuseColor, specularColor);
 
 	// It's for an optimisation
 	// We don't have to calcul shadow map if we are not in the light
-
 	if( (Color.r + Color.g + Color.b) > 0.001)
 	{
 		// Read Shadow map value
 		vec4 wlP = WorldToLightScreen * vec4(position, 1.0);
 		vec3 lP = vec3(wlP/wlP.w) * 0.5 + 0.5;
+		
+		vec3 I = position - AreaLightPosition;
+		float distanceToLight = length(I);
 
-		float bias = 0.00000001f;
-		//float shadowDepth = texture(ShadowTexture, lP.xy).r; // dBlocker
-		float shadowDepth = textureProj(ShadowTexture, vec4(lP.xy, lP.z - bias, 1.0), 0.0);
-		// lP.z c'est dLight
-		float shadowed = lP.z - (shadowDepth);
+		vec2 texelSize = ShadowTexelSize.xy;
 
-		if(shadowed > 0)
-		{
-			Color = vec4(0,0,0,1);
-		}
-		//Color = vec4(vec3(shadowDepth), 1.0);
+		//float shadowDepth = SampleShadowMapPCF(lP, texelSize, vec2(2.0));
+
+		float shadowDepth = SampleShadowMapPCSS(lP, distanceToLight, texelSize);
+
+		Color = Color * vec4(vec3(shadowDepth), 1.0);
 	}
-	else
-	{
-		vec3 ambient = vec3(1.0, 1.0, 1.0);
-		float ambientFactor = 0.12;
-		Color = vec4( Color.rgb + (diffuseColor * ambient * ambientFactor), 1.0 );
-	}
-
+	
+	// Finally add ambient color
+	Color = Color + vec4(vec3(ambientColor), 1.0);
 }
-
-
-//http://graphics.cs.williams.edu/data/meshes.xml

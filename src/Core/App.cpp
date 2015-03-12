@@ -29,7 +29,7 @@
 
 #define M_PI        3.14159265358979323846264338327950288f   /* pi */
 #define UI 1
-#define BLITRENDER 1
+#define BLITRENDER 0
 
 namespace core
 {
@@ -166,7 +166,6 @@ namespace core
 
 		m_pScene->addObject(cube);
 		m_pScene->addObject(plane);
-		m_pScene->addObject(m_pAreaLight);
 
 		m_pQuadBlit = utils::QuadBlit::create_ptr();
 
@@ -251,7 +250,7 @@ namespace core
 			}
 			
 			// Get camera matrices
-			glm::mat4 projection = glm::perspective(45.0f, (float)core::Config::WINDOW_WIDTH / (float)core::Config::WINDOW_HEIGHT, 0.1f, 100.f);
+			glm::mat4 projection = glm::perspective(45.0f, (float)core::Config::WINDOW_WIDTH / (float)core::Config::WINDOW_HEIGHT, 0.1f, 1000.f);
 			glm::mat4 worldToView = glm::lookAt(
 				m_pCamera->getWhereILook(),
 				m_pCamera->getOrigin(), 
@@ -264,8 +263,11 @@ namespace core
 			glm::mat4 screenToWorld = glm::transpose(glm::inverse(mvp));
 
 			// Light space matrices
-			// From light space to shadow map screen space
-			glm::mat4 projectionLight = glm::perspective(180.f, 1.f, 1.f, 100.f);
+			// From ligh	t space to shadow map screen space
+			float SizeX = *m_pAreaLight->getSizeX() * 0.5f;
+			float SizeY = *m_pAreaLight->getSizeY() * 0.5f;
+
+			glm::mat4 projectionLight = glm::frustum(-SizeX, SizeX, -SizeY, SizeY, 0.1f, 1000.0f);
 			// From world to light
 			glm::mat4 worldToLight = glm::lookAt(m_pAreaLight->getPosition(), m_pAreaLight->getPosition() + m_pAreaLight->getDirection(), glm::vec3(0.f, 0.f, -1.f));
 			// From world to shadow map screen space 
@@ -278,9 +280,11 @@ namespace core
 			glEnable(GL_DEPTH_TEST);
 
 			// RENDER GBUFFEROBJECT
+			m_pScene->addObject(m_pAreaLight);
 			m_pGbuffer->render(m_pScene, projection, worldToView, objectToWorld);
 
 			// RENDER SHADOW
+			m_pScene->removeLastObjectAdd();
 			m_pShadowBuffer->render(m_pScene, projectionLight, worldToLight, objectToWorld);
 
 			// RENDER ILLUMINATION
@@ -296,7 +300,6 @@ namespace core
 			m_pBlit->addTextureToDraw(m_pGbuffer->getTextureId(0), 0);
 			m_pBlit->addTextureToDraw(m_pGbuffer->getTextureId(1), 1);
 			m_pBlit->addTextureToDraw(m_pGbuffer->getTextureId(2), 2);
-			m_pBlit->addTextureToDraw(m_pShadowBuffer->getTexture(), 3);
 			m_pBlit->render(m_pQuadBlit);
 #endif
 
@@ -320,7 +323,7 @@ namespace core
 			int logScroll = 0;
 			imguiBeginScrollArea("Light", core::Config::WINDOW_WIDTH - 210, core::Config::WINDOW_HEIGHT - 310, 200, 300, &logScroll);
 			
-			imguiSlider("Light diffuse", m_pAreaLight->getDiffuseIntensityPtr(), 0.0f, 100.0f, 1.0f);
+			imguiSlider("Light diffuse", m_pAreaLight->getDiffuseIntensityPtr(), 0.0f, 1000.0f, 1.0f);
 			imguiSlider("Light specular", m_pAreaLight->getSpecularIntensityPtr(), 0.0f, 100.0f, 1.0f);
 			imguiSlider("Light Size X", m_pAreaLight->getSizeX(), 0.0f, 100.0f, 1.0f);
 			imguiSlider("Light Size Y", m_pAreaLight->getSizeY(), 0.0f, 100.0f, 1.0f);
@@ -330,6 +333,7 @@ namespace core
 			imguiSlider("Light Angle X", m_pAreaLight->getAngleX(), -M_PI, M_PI, 0.1f);
 			imguiSlider("Light Angle Y", m_pAreaLight->getAngleY(), -M_PI, M_PI, 0.1f);
 			imguiSlider("Light Angle Z", m_pAreaLight->getAngleZ(), -M_PI, M_PI, 0.1f);
+			imguiSlider("Light Distance", m_pAreaLight->getDistance(), 0.0f, 150.f, 0.1f);
 			imguiEndScrollArea();
 			imguiEndFrame();
 			imguiRenderGLDraw(core::Config::WINDOW_WIDTH, core::Config::WINDOW_HEIGHT);

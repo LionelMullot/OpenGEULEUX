@@ -29,7 +29,8 @@ namespace worldObject
 		glm::vec2	m_vSize;
 		float		m_fAngleX;
 		float		m_fAngleY;
-		float		m_fAngleZ; 
+		float		m_fAngleZ;
+		float		m_fDistance;
 		GLuint		m_Textures[1];
 
 	/* ***************************************************** */
@@ -67,6 +68,7 @@ namespace worldObject
 		float * const getAngleX(void);
 		float * const getAngleY(void);
 		float * const getAngleZ(void);
+		float * const getDistance(void);
 		const GLuint getTexture(void) const;
 
 	}; // class AreaLight
@@ -79,6 +81,7 @@ namespace worldObject
 	inline float * const AreaLight::getAngleX(void) { return &m_fAngleX; }
 	inline float * const AreaLight::getAngleY(void) { return &m_fAngleY; }
 	inline float * const AreaLight::getAngleZ(void) { return &m_fAngleZ; }
+	inline float * const AreaLight::getDistance(void) { return &m_fDistance; }
 
 	inline const GLuint AreaLight::getTexture(void) const { return m_Textures[0]; }
 

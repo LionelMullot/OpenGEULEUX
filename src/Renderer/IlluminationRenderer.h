@@ -38,6 +38,7 @@ namespace renderer
 		GLuint	m_glScreenToWorldLocation;
 		GLuint	m_glWorldToLightScreenLocation;
 		GLuint	m_glCameraViewLocation;
+
 		// Area Light Uniforms
 		GLuint	m_glAreaLightPositionLocation;
 		GLuint	m_glAreaLightDirectionLocation;
@@ -47,6 +48,11 @@ namespace renderer
 		GLuint	m_glAreaLightColorLocation;
 		GLuint	m_glAreaLightDiffuseIntensityLocation;
 		GLuint	m_glAreaLightSpecularIntensityLocation;
+		GLuint	m_glAreaLightDistanceLocation;
+
+		// Shadow Uniforms 
+		GLuint	m_glBiasLocation;
+		GLuint	m_glTexelSizeLocation;
 
 		/* ***************************************************** */
 		/* ************* CONSTUCTION AND DESTUCTION ************ */

@@ -6,6 +6,7 @@
 #include "Core/Config.h"
 #include "WorldObject/Scene.h"
 #include "WorldObject/AreaLight.h"
+#include "ShadowRenderer.h"
 
 #include <cstdio>
 #include <cassert>
@@ -48,6 +49,9 @@ namespace renderer
 		, m_glAreaLightColorLocation(0)
 		, m_glAreaLightDiffuseIntensityLocation(0)
 		, m_glAreaLightSpecularIntensityLocation(0)
+		, m_glAreaLightDistanceLocation(0)
+		, m_glBiasLocation(0)
+		, m_glTexelSizeLocation(0)
 	{}
 
 
@@ -84,6 +88,10 @@ namespace renderer
 		m_glAreaLightColorLocation = m_pShaderProgram->getUniformIndex("AreaLightColor");
 		m_glAreaLightDiffuseIntensityLocation = m_pShaderProgram->getUniformIndex("AreaLightDiffuseIntensity");
 		m_glAreaLightSpecularIntensityLocation = m_pShaderProgram->getUniformIndex("AreaLightSpecularIntensity");
+		m_glAreaLightDistanceLocation = m_pShaderProgram->getUniformIndex("AreaLightDistance");
+
+		m_glBiasLocation = m_pShaderProgram->getUniformIndex("ShadowBias");
+		m_glTexelSizeLocation = m_pShaderProgram->getUniformIndex("ShadowTexelSize");
 	}
 
 	void IlluminationRenderer::release(void)
@@ -132,9 +140,13 @@ namespace renderer
 				m_pShaderProgram->setUniform(m_glAreaLightRightLocation, m_pAreaLight->getRight());
 				m_pShaderProgram->setUniform(m_glAreaLightSizeLocation, m_pAreaLight->getSize());
 				m_pShaderProgram->setUniform(m_glAreaLightColorLocation, m_pAreaLight->getColor());
+				m_pShaderProgram->setUniform(m_glAreaLightDistanceLocation, *m_pAreaLight->getDistance());
 				m_pShaderProgram->setUniform(m_glAreaLightDiffuseIntensityLocation, m_pAreaLight->getDiffuseIntensity());
 				m_pShaderProgram->setUniform(m_glAreaLightSpecularIntensityLocation, m_pAreaLight->getSpecularIntensity());
 			}
+
+			m_pShaderProgram->setUniform(m_glBiasLocation, 1.0f / ShadowRenderer::RESOLUTION * 2);
+			m_pShaderProgram->setUniform(m_glTexelSizeLocation, glm::vec3(1.0f / (float)ShadowRenderer::RESOLUTION, 1.0f / (float)ShadowRenderer::RESOLUTION, 0.0f));
 
 			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, m_tTexture[0]);

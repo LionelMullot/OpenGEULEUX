@@ -56,4 +56,8 @@ namespace worldObject
 		m_pObject3D.push_back(p_pObject);
 	}
 
+	void Scene::removeLastObjectAdd()
+	{
+		m_pObject3D.pop_back();
+	}
 } // namespace worldObject

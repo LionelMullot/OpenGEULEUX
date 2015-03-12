@@ -39,6 +39,7 @@ namespace worldObject
 	, m_fAngleX(0.0f)
 	, m_fAngleY(0.0f)
 	, m_fAngleZ(0.0f)
+	, m_fDistance(0.0f)
 	{}
 
 	AreaLight::~AreaLight() {}
@@ -47,14 +48,16 @@ namespace worldObject
 	{
 		Light::init();
 
-		m_vPosition = glm::vec3(0, 1, 0);
+		m_vPosition = glm::vec3(0, 2, 0);
 		m_vSize = glm::vec2(1, 1);
 
-		m_fDiffuseIntensity = 10.0f;
+		m_fDiffuseIntensity = 165.0f;
 		m_fSpecularIntensity = 10.0f;
 		m_vColor = glm::vec3(1, 1, 1);
 
 		m_fAngleX = M_PI_2;
+
+		m_fDistance = 5.0f;
 
 		m_mTranslation[0] = glm::vec4(1, 0, 0, 0);
 		m_mTranslation[1] = glm::vec4(0, 1, 0, 0);
@@ -91,7 +94,7 @@ namespace worldObject
 		float fRight = SizeX * .5f;
 		float fTop = SizeY * .5f;
 		float fBottom = - SizeY * .5f;
-		float Zpos = 0.0f;
+		float Zpos = 0.f;
 		float Zdistance = 0 + 0.1f;
 
 		// Init shape default height in z axis
@@ -216,6 +219,7 @@ namespace worldObject
 		m_vRight = glm::normalize(glm::vec3(col1.x, col1.y, col1.z));
 		m_vUp = glm::normalize(glm::vec3(col2.x, col2.y, col2.z));
 		m_vDirection = glm::normalize(glm::vec3(col3.x, col3.y, col3.z));
+		m_vPosition = glm::vec3(col4.x, col4.y, col4.z);
 	}
 
 	void AreaLight::draw(const utils::ShaderProgram * p_pShaderProgram, const glm::mat4& p_mObjectToWorld) const

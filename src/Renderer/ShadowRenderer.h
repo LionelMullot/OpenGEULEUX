@@ -21,7 +21,8 @@ namespace renderer
 {
 	class ShadowRenderer
 	{
-	const int RESOLUTION = 4096;
+	public:
+		static const int RESOLUTION = 512;
 
 		/* ***************************************************** */
 		/* ********************** MEMBERS ********************** */
