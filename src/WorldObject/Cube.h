@@ -3,11 +3,7 @@
 #ifndef __WORLDOBJECT_CUBE_H__
 #define __WORLDOBJECT_CUBE_H__
 
-#include <cstdint>
-#include <vector>
-
 #include "Object3D.h"
-#include <GL/glew.h>
 
 namespace worldObject
 {
@@ -33,13 +29,15 @@ namespace worldObject
 		virtual ~Cube(void);
 
 		virtual void init(void);
+		virtual void initData(void);
 		virtual void release(void);
 
 	/* ***************************************************** */
 	/* ********************** METHODS ********************** */
 	/* ***************************************************** */
 	public:
-		virtual void draw(const utils::ShaderProgram * p_pShaderProgram, const glm::mat4& p_mObjectToWorld) const;
+		virtual void draw() const;
+		virtual void updateMatrix(void);
 
 	}; // class Cube
 

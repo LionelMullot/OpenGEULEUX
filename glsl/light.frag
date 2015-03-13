@@ -214,7 +214,7 @@ void main(void)
 
 	// Compute ambient color
 	vec3 ambient = vec3(1.0, 1.0, 1.0);
-	float ambientFactor = 0.12;
+	float ambientFactor = 0.18;
 	vec3 ambientColor = vec3( ambient * ambientFactor * diffuseColor );
 
 	// Convert texture coordinates into screen space coordinates

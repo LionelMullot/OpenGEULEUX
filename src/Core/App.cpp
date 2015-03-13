@@ -27,7 +27,6 @@
 #include "glm/mat4x4.hpp" // glm::mat4
 #include "glm/gtc/matrix_transform.hpp" // glm::translate, glm::rotate, glm::scale, glm::perspective
 
-#define M_PI        3.14159265358979323846264338327950288f   /* pi */
 #define UI 1
 #define BLITRENDER 0
 
@@ -161,11 +160,58 @@ namespace core
 		m_pScene = worldObject::Scene::create_ptr();
 
 		worldObject::Cube * cube = worldObject::Cube::create_ptr();
-		worldObject::Plane * plane = worldObject::Plane::create_ptr();
+		worldObject::Cube * cube1 = worldObject::Cube::create_ptr(); 
+		cube1->setPosition(glm::vec3(-2.f, 4.0f, -3.0f));
+		worldObject::Cube * cube2 = worldObject::Cube::create_ptr();
+		cube2->setPosition(glm::vec3(2.f, 5.0f, -3.0f));
+		worldObject::Cube * cube3 = worldObject::Cube::create_ptr();
+		cube3->setPosition(glm::vec3(8.f, 2.0f, -3.0f));
+		worldObject::Cube * cube4 = worldObject::Cube::create_ptr();
+		cube4->setPosition(glm::vec3(-3.f, 2.0f, -5.0f));
+
+		worldObject::Plane * planeBottom = worldObject::Plane::create_ptr();
+		planeBottom->setPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+		planeBottom->setSize(glm::vec3(30.0f, 1.0f, 30.0f));
+
+		worldObject::Plane * planeUp = worldObject::Plane::create_ptr();
+		planeUp->setPosition(glm::vec3(0.0f, 30.0f, 0.0f));
+		planeUp->setSize(glm::vec3(30.0f, 1.0f, 30.0f));
+
+		worldObject::Plane * planeLeft = worldObject::Plane::create_ptr();
+		planeLeft->setPosition(glm::vec3(-15.0f, 15.0f, 0.0f));
+		planeLeft->setSize(glm::vec3(30.0f, 1.0f, 30.0f));
+		planeLeft->setAngleX(M_PI_2);
+		planeLeft->setAngleZ(M_PI_2);
+
+		worldObject::Plane * planeRight = worldObject::Plane::create_ptr();
+		planeRight->setPosition(glm::vec3(15.0f, 15.0f, 0.0f));
+		planeRight->setSize(glm::vec3(30.0f, 1.0f, 30.0f));
+		planeRight->setAngleX(M_PI_2);
+		planeRight->setAngleZ(M_PI_2);
+
+		worldObject::Plane * planeNear = worldObject::Plane::create_ptr();
+		planeNear->setPosition(glm::vec3(0.0f, 15.0f, -15.0f));
+		planeNear->setSize(glm::vec3(30.0f, 1.0f, 30.0f));
+		planeNear->setAngleX(M_PI_2);
+
+		worldObject::Plane * planeFar = worldObject::Plane::create_ptr();
+		planeFar->setPosition(glm::vec3(0.0f, 15.0f, 15.0f));
+		planeFar->setSize(glm::vec3(30.0f, 1.0f, 30.0f));
+		planeFar->setAngleX(M_PI_2);
+
 		m_pAreaLight = worldObject::AreaLight::create_ptr();
 
 		m_pScene->addObject(cube);
-		m_pScene->addObject(plane);
+		m_pScene->addObject(cube1);
+		m_pScene->addObject(cube2);
+		m_pScene->addObject(cube3);
+		m_pScene->addObject(cube4);
+		m_pScene->addObject(planeBottom);
+		m_pScene->addObject(planeUp);
+		m_pScene->addObject(planeLeft);
+		m_pScene->addObject(planeRight);
+		m_pScene->addObject(planeNear);
+		m_pScene->addObject(planeFar);
 
 		m_pQuadBlit = utils::QuadBlit::create_ptr();
 

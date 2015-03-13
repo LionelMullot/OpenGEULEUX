@@ -29,14 +29,22 @@ namespace worldObject
 
 	void Plane::init(void)
 	{
+		m_vSize = glm::vec3(1, 1, 1);
+
+		initData();
+		updateMatrix();
+	}
+
+	void Plane::initData(void)
+	{
 		// Init shape
 		m_iTriangleCount = 2;
-		m_pTriangleList = { 0, 1, 2, 2, 1, 3 }; 
+		m_pTriangleList = { 0, 1, 2, 2, 1, 3 };
 		m_pUVS = { 0.f, 0.f, 0.f, 1.f, 1.f, 0.f, 1.f, 1.f };
-		m_pVertices = { -15.0, -1.0, 15.0
-					  , 15.0, -1.0, 15.0
-					  , -15.0, -1.0, -15.0
-					  , 15.0, -1.0, -15.0 }; 
+		m_pVertices = { -0.5, 0.0, 0.5
+			, 0.5, 0.0, 0.5
+			, -0.5, 0.0, -0.5
+			, 0.5, 0.0, -0.5 };
 		m_pNormals = { 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0 };
 
 		// Init VAO & VBO 
@@ -80,7 +88,12 @@ namespace worldObject
 	{
 	}
 
-	void Plane::draw(const utils::ShaderProgram * p_pShaderProgram, const glm::mat4& p_mObjectToWorld) const
+	void Plane::updateMatrix(void)
+	{
+		Object3D::updateMatrix();
+	}
+
+	void Plane::draw() const
 	{
 		glBindVertexArray(m_idVao);
 		glDrawElementsInstanced(GL_TRIANGLES, m_iTriangleCount * 3, GL_UNSIGNED_INT, (void*)0, 1);

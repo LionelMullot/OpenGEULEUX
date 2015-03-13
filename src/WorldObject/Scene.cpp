@@ -46,8 +46,8 @@ namespace worldObject
 	{
 		for (Object3D* p_object : m_pObject3D)
 		{
-			p_pShaderProgram->setUniform(p_pShaderProgram->getUniformIndex("ObjectToWorld"), p_mObjectToWorld);
-			p_object->draw(p_pShaderProgram, p_mObjectToWorld);
+			p_pShaderProgram->setUniform(p_pShaderProgram->getUniformIndex("ObjectToWorld"), p_object->getModelMatrix());
+			p_object->draw();
 		}
 	}
 

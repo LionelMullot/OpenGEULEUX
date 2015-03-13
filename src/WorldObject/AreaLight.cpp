@@ -5,10 +5,6 @@
 #include <iostream>
 #include "stb_image.h"
 
-#define M_PI        3.14159265358979323846264338327950288f   /* pi */
-#define M_PI_2      1.57079632679489661923132169163975144f  /* pi/2 */
-#define M_PI_4      0.785398163397448309615660845819875721f  /* pi/4 */
-
 namespace worldObject
 {
 	AreaLight * AreaLight::create_ptr(void)
@@ -29,16 +25,8 @@ namespace worldObject
 
 	AreaLight::AreaLight() 
 	: Light()
-	, m_mRotation(glm::mat4(0.0f))
-	, m_mTranslation(glm::mat4(0.0f))
-	, m_mScale(glm::mat4(0.0f))
-	, m_mObjectModel(glm::mat4(0.0f))
 	, m_vUp(glm::vec3(0.0f))
 	, m_vRight(glm::vec3(0.0f))
-	, m_vSize(glm::vec2(0.0f))
-	, m_fAngleX(0.0f)
-	, m_fAngleY(0.0f)
-	, m_fAngleZ(0.0f)
 	, m_fDistance(0.0f)
 	{}
 
@@ -49,7 +37,7 @@ namespace worldObject
 		Light::init();
 
 		m_vPosition = glm::vec3(0, 2, 0);
-		m_vSize = glm::vec2(1, 1);
+		m_vSize = glm::vec3(1, 1, 1);
 
 		m_fDiffuseIntensity = 165.0f;
 		m_fSpecularIntensity = 10.0f;
@@ -58,25 +46,6 @@ namespace worldObject
 		m_fAngleX = M_PI_2;
 
 		m_fDistance = 5.0f;
-
-		m_mTranslation[0] = glm::vec4(1, 0, 0, 0);
-		m_mTranslation[1] = glm::vec4(0, 1, 0, 0);
-		m_mTranslation[2] = glm::vec4(0, 0, 1, 0);
-
-		// Load image
-		int x;
-		int y;
-		int comp;
-		unsigned char * diffuse = stbi_load("../../textures/flappy.png", &x, &y, &comp, 3);
-
-		// Create Texture for the cube
-		glGenTextures(1, &m_Textures[0]);
-		glBindTexture(GL_TEXTURE_2D, m_Textures[0]);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, x, y, 0, GL_RGB, GL_UNSIGNED_BYTE, diffuse);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 		initData();
 		updateMatrix();
@@ -175,41 +144,26 @@ namespace worldObject
 		glBindVertexArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+		// Load image
+		int x;
+		int y;
+		int comp;
+		unsigned char * diffuse = stbi_load("../../textures/flappy.png", &x, &y, &comp, 3);
+
+		// Create Texture for the cube
+		glGenTextures(1, &m_Textures[0]);
+		glBindTexture(GL_TEXTURE_2D, m_Textures[0]);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, x, y, 0, GL_RGB, GL_UNSIGNED_BYTE, diffuse);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	}
 	
 	void AreaLight::updateMatrix(void)
 	{
-		// Translation
-		m_mTranslation[3] = glm::vec4(m_vPosition[0], m_vPosition[1], m_vPosition[2], 1);
-		// Rotation on x axis
-		glm::mat4 mRotationX;
-		mRotationX[0] = glm::vec4(1, 0, 0, 0);
-		mRotationX[1] = glm::vec4(0, glm::cos(m_fAngleX), glm::sin(m_fAngleX), 0);
-		mRotationX[2] = glm::vec4(0, -glm::sin(m_fAngleX), glm::cos(m_fAngleX), 0);
-		mRotationX[3] = glm::vec4(0, 0, 0, 1);
-		// Rotation on y axis
-		glm::mat4 mRotationY;
-		mRotationY[0] = glm::vec4(glm::cos(m_fAngleY), 0, -glm::sin(m_fAngleY), 0);
-		mRotationY[1] = glm::vec4(0, 1, 0, 0);
-		mRotationY[2] = glm::vec4(glm::sin(m_fAngleY), 0, glm::cos(m_fAngleY), 0);
-		mRotationY[3] = glm::vec4(0, 0, 0, 1);
-		// Rotation on z axis
-		glm::mat4 mRotationZ;
-		mRotationZ[0] = glm::vec4(glm::cos(m_fAngleZ), glm::sin(m_fAngleZ), 0, 0);
-		mRotationZ[1] = glm::vec4(-glm::sin(m_fAngleZ), glm::cos(m_fAngleZ), 0, 0);
-		mRotationZ[2] = glm::vec4(0, 0, 1, 0);
-		mRotationZ[3] = glm::vec4(0, 0, 0, 1);
-
-		// Final rotation
-		m_mRotation = mRotationX * mRotationY * mRotationZ;
-
-		// Scaling x and y axis
-		m_mScale[0] = glm::vec4(m_vSize.x, 0, 0, 0);
-		m_mScale[1] = glm::vec4(0, m_vSize.y, 0, 0);
-		m_mScale[2] = glm::vec4(0, 0, 1, 0);
-		m_mScale[3] = glm::vec4(0, 0, 0, 1);
-
-		m_mObjectModel = m_mTranslation * m_mRotation * m_mScale; // Rotation first then translation
+		Light::updateMatrix();
 
 		glm::vec4 col1 = m_mObjectModel[0];
 		glm::vec4 col2 = m_mObjectModel[1];
@@ -222,10 +176,8 @@ namespace worldObject
 		m_vPosition = glm::vec3(col4.x, col4.y, col4.z);
 	}
 
-	void AreaLight::draw(const utils::ShaderProgram * p_pShaderProgram, const glm::mat4& p_mObjectToWorld) const
+	void AreaLight::draw() const
 	{
-		p_pShaderProgram->setUniform(p_pShaderProgram->getUniformIndex("ObjectToWorld"), m_mObjectModel);
-
 		glActiveTexture(0);
 		glBindTexture(GL_TEXTURE_2D, 0);
 		glBindVertexArray(m_idVao);
