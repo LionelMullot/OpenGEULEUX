@@ -241,10 +241,10 @@ void main(void)
 
 		vec2 texelSize = ShadowTexelSize.xy;
 
-		float shadowDepth = SampleShadowMap(lP.xy, lP.z);
+		//float shadowDepth = SampleShadowMap(lP.xy, lP.z);
 		//float shadowDepth = SampleShadowMapPCF(lP, texelSize, vec2(2.0));
 
-		//float shadowDepth = SampleShadowMapPCSS(lP, distanceToLight, texelSize);
+		float shadowDepth = SampleShadowMapPCSS(lP, distanceToLight, texelSize);
 
 		Color = Color * vec4(vec3(shadowDepth), 1.0);
 	}
