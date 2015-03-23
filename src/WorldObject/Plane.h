@@ -10,6 +10,9 @@ namespace worldObject
 	class Plane : public Object3D
 	{
 
+	protected:
+		GLuint	m_Textures[2];
+
 	/* ***************************************************** */
 	/* ************* CONSTUCTION AND DESTUCTION ************ */
 	/* ***************************************************** */

@@ -1,6 +1,8 @@
 
 #include "Plane.h"
 
+#include "stb_image.h"
+
 #include <cassert>
 #include <iostream>
 
@@ -82,6 +84,33 @@ namespace worldObject
 		glBindVertexArray(0);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+		// Load image
+		int x;
+		int y;
+		int comp;
+		unsigned char * diffuse = stbi_load("../../textures/sand.jpg", &x, &y, &comp, 4);
+		int x1;
+		int y1;
+		int comp1;
+		unsigned char * specular = stbi_load("../../textures/sand_spec.png", &x1, &y1, &comp1, 4);
+
+		// Create Texture for the cube
+		glGenTextures(1, &m_Textures[0]);
+		glBindTexture(GL_TEXTURE_2D, m_Textures[0]);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, x, y, 0, GL_RGBA, GL_UNSIGNED_BYTE, diffuse);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		glGenTextures(1, &m_Textures[1]);
+		glBindTexture(GL_TEXTURE_2D, m_Textures[1]);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, x1, y1, 0, GL_RGBA, GL_UNSIGNED_BYTE, specular);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	}
 
 	void Plane::release(void)
@@ -95,6 +124,10 @@ namespace worldObject
 
 	void Plane::draw() const
 	{
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, m_Textures[0]);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, m_Textures[1]);
 		glBindVertexArray(m_idVao);
 		glDrawElementsInstanced(GL_TRIANGLES, m_iTriangleCount * 3, GL_UNSIGNED_INT, (void*)0, 1);
 		glBindVertexArray(0);

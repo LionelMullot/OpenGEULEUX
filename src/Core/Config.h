@@ -8,8 +8,8 @@ namespace core
 	class Config
 	{
 	public:
-		const static int WINDOW_WIDTH = 1024;
-		const static int WINDOW_HEIGHT = 768;
+		const static int WINDOW_WIDTH = 1742;
+		const static int WINDOW_HEIGHT = 980;
 
 	}; // class Config
 

@@ -56,7 +56,7 @@ vec3 linePlaneIntersect( vec3 lp, vec3 lv, vec3 pc, vec3 pn )
 	return lp + lv * ( dot(pn, pc - lp) / dot(pn, lv) );
 }
 
-vec4 AreaLightCalculation(vec3 Position, vec3 Normal, vec3 diffuseColor, vec3 specularColor)
+vec4 AreaLightCalculation(vec3 Position, vec3 Normal, vec3 diffuseColor, vec3 specularColor, float specularPower)
 {	
 	vec3 specular = vec3(0.0,0.0,0.0);
 	vec3 diffuse = vec3(0.0,0.0,0.0);
@@ -97,10 +97,10 @@ vec4 AreaLightCalculation(vec3 Position, vec3 Normal, vec3 diffuseColor, vec3 sp
 		diffuse = AreaLightColor * lWeightDiffuse * attenuation * AreaLightDiffuseIntensity;
 
 		// Specular Factor
-		vec3 r = -reflect(lVector, Normal);
-		r = normalize(r);
-
-		float lWeightSpecular = pow( max(0.0, dot(r, Normal)), 20.0);
+		vec3 v = normalize(Position - CameraView);
+		vec3 h = normalize(lVector - v);
+		float ndoth = clamp(dot(Normal, h), 0.0, 1.0);
+		float lWeightSpecular = pow(ndoth, specularPower);
 
 		//specular = LightTexture * lWeightSpecular * attenuation * AreaLightSpecularIntensity;
 		specular = AreaLightColor * lWeightSpecular * attenuation * AreaLightSpecularIntensity;
@@ -226,7 +226,7 @@ void main(void)
 
 	vec3 normal = normalize(normalBuffer.rgb);
 
-	Color = AreaLightCalculation(position, normal, diffuseColor, specularColor);
+	Color = AreaLightCalculation(position, normal, diffuseColor, specularColor, specularPower);
 
 	// It's for an optimisation
 	// We don't have to calcul shadow map if we are not in the light
@@ -241,9 +241,10 @@ void main(void)
 
 		vec2 texelSize = ShadowTexelSize.xy;
 
+		float shadowDepth = SampleShadowMap(lP.xy, lP.z);
 		//float shadowDepth = SampleShadowMapPCF(lP, texelSize, vec2(2.0));
 
-		float shadowDepth = SampleShadowMapPCSS(lP, distanceToLight, texelSize);
+		//float shadowDepth = SampleShadowMapPCSS(lP, distanceToLight, texelSize);
 
 		Color = Color * vec4(vec3(shadowDepth), 1.0);
 	}

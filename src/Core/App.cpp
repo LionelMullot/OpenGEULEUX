@@ -27,7 +27,7 @@
 #include "glm/mat4x4.hpp" // glm::mat4
 #include "glm/gtc/matrix_transform.hpp" // glm::translate, glm::rotate, glm::scale, glm::perspective
 
-#define UI 1
+#define UI 0
 #define BLITRENDER 0
 
 namespace core
@@ -103,7 +103,7 @@ namespace core
 	void App::initWindow(void)
 	{
 		// Open a window and create its OpenGL context
-		m_pWindow = glfwCreateWindow(core::Config::WINDOW_WIDTH, core::Config::WINDOW_HEIGHT, "Projet", 0, 0);
+		m_pWindow = glfwCreateWindow(core::Config::WINDOW_WIDTH, core::Config::WINDOW_HEIGHT, "AreaLight and PCSS project", 0, 0);
 		if (!m_pWindow)
 		{
 			fprintf(stderr, "Failed to open GLFW window\n");
@@ -238,6 +238,70 @@ namespace core
 			int leftButton = glfwGetMouseButton(m_pWindow, GLFW_MOUSE_BUTTON_LEFT);
 			int rightButton = glfwGetMouseButton(m_pWindow, GLFW_MOUSE_BUTTON_RIGHT);
 			int middleButton = glfwGetMouseButton(m_pWindow, GLFW_MOUSE_BUTTON_MIDDLE);
+			int altPressed = glfwGetKey(m_pWindow, GLFW_KEY_LEFT_SHIFT);
+			int zButton = glfwGetKey(m_pWindow, GLFW_KEY_W);
+			int sButton = glfwGetKey(m_pWindow, GLFW_KEY_S);
+			int qButton = glfwGetKey(m_pWindow, GLFW_KEY_A);
+			int dButton = glfwGetKey(m_pWindow, GLFW_KEY_D);
+			int aButton = glfwGetKey(m_pWindow, GLFW_KEY_Q);
+			int eButton = glfwGetKey(m_pWindow, GLFW_KEY_E);
+			int upKey = glfwGetKey(m_pWindow, GLFW_KEY_UP);
+			int downKey = glfwGetKey(m_pWindow, GLFW_KEY_DOWN);
+			int rightKey = glfwGetKey(m_pWindow, GLFW_KEY_RIGHT);
+			int leftKey = glfwGetKey(m_pWindow, GLFW_KEY_LEFT);
+			int pageUpKey = glfwGetKey(m_pWindow, GLFW_KEY_PAGE_UP);
+			int pageDownKey = glfwGetKey(m_pWindow, GLFW_KEY_PAGE_DOWN);
+
+			glm::vec3 lightPosition = m_pAreaLight->getPosition();
+			if (zButton == GLFW_PRESS)
+			{
+				m_pAreaLight->setPosition(lightPosition + glm::vec3(0.0, 0.0, 0.1));
+			}
+			if (sButton == GLFW_PRESS)
+			{
+				m_pAreaLight->setPosition(lightPosition + glm::vec3(0.0, 0.0, -0.1));
+			}
+			if (qButton == GLFW_PRESS)
+			{
+				m_pAreaLight->setPosition(lightPosition + glm::vec3(0.1, 0.0, 0.0));
+			}
+			if (dButton == GLFW_PRESS)
+			{
+				m_pAreaLight->setPosition(lightPosition + glm::vec3(-0.1, 0.0, 0.0));
+			}
+			if (aButton == GLFW_PRESS)
+			{
+				m_pAreaLight->setPosition(lightPosition + glm::vec3(0.0, 0.1, 0.0));
+			}
+			if (eButton == GLFW_PRESS)
+			{
+				m_pAreaLight->setPosition(lightPosition + glm::vec3(0.0, -0.1, 0.0));
+			}
+			if (upKey == GLFW_PRESS)
+			{
+				m_pAreaLight->setAngleX(*m_pAreaLight->getAngleX() + 0.01f);
+			}
+			if (downKey == GLFW_PRESS)
+			{
+				m_pAreaLight->setAngleX(*m_pAreaLight->getAngleX() - 0.01f);
+			}
+			if (rightKey == GLFW_PRESS)
+			{
+				m_pAreaLight->setAngleY(*m_pAreaLight->getAngleY() + 0.01f);
+			}
+			if (leftKey == GLFW_PRESS)
+			{
+				m_pAreaLight->setAngleY(*m_pAreaLight->getAngleY() - 0.01f);
+			}
+			const glm::vec3 size = glm::vec3(*m_pAreaLight->getSizeX(), *m_pAreaLight->getSizeY(), 1.0);
+			if (pageUpKey == GLFW_PRESS)
+			{
+				m_pAreaLight->setSize(size + glm::vec3(0.1, 0, 0));
+			}
+			if (pageDownKey == GLFW_PRESS)
+			{
+				m_pAreaLight->setSize(size + glm::vec3(-0.1, 0, 0));
+			}
 
 			if (leftButton == GLFW_PRESS)
 				m_pGUIState->setTurnLock(true);
@@ -255,7 +319,6 @@ namespace core
 				m_pGUIState->setPanLock(false);
 
 			// Camera movements
-			int altPressed = glfwGetKey(m_pWindow, GLFW_KEY_LEFT_SHIFT);
 			if (!altPressed && (leftButton == GLFW_PRESS || rightButton == GLFW_PRESS || middleButton == GLFW_PRESS))
 			{
 				double x; double y;
@@ -370,7 +433,7 @@ namespace core
 			imguiBeginScrollArea("Light", core::Config::WINDOW_WIDTH - 210, core::Config::WINDOW_HEIGHT - 310, 200, 300, &logScroll);
 			
 			imguiSlider("Light diffuse", m_pAreaLight->getDiffuseIntensityPtr(), 0.0f, 1000.0f, 1.0f);
-			imguiSlider("Light specular", m_pAreaLight->getSpecularIntensityPtr(), 0.0f, 100.0f, 1.0f);
+			imguiSlider("Light specular", m_pAreaLight->getSpecularIntensityPtr(), 0.0f, 1000.0f, 1.0f);
 			imguiSlider("Light Size X", m_pAreaLight->getSizeX(), 0.0f, 100.0f, 1.0f);
 			imguiSlider("Light Size Y", m_pAreaLight->getSizeY(), 0.0f, 100.0f, 1.0f);
 			imguiSlider("Light Position X", m_pAreaLight->getPositionAxisValue(0), -15.0f, 15.0f, 0.1f);
@@ -415,8 +478,9 @@ namespace core
 		worldObject::Scene::release_ptr(m_pScene);
 		renderer::BlitRenderer::release_ptr(m_pBlit);
 		renderer::GBufferRenderer::release_ptr(m_pGbuffer);
+		renderer::ShadowRenderer::release_ptr(m_pShadowBuffer);
 		renderer::IlluminationRenderer::release_ptr(m_pIllumination);
-
+		utils::QuadBlit::release_ptr(m_pQuadBlit);
 		// Close OpenGL window and terminate GLFW
 		glfwTerminate();
 	}

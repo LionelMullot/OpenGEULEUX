@@ -90,16 +90,16 @@ namespace worldObject
 		int x;
 		int y;
 		int comp;
-		unsigned char * diffuse = stbi_load("../../textures/spnza_bricks_a_diff.tga", &x, &y, &comp, 3);
+		unsigned char * diffuse = stbi_load("../../textures/spnza_bricks_a_diff.tga", &x, &y, &comp, 4);
 		int x1;
 		int y1;
 		int comp1;
-		unsigned char * specular = stbi_load("../../textures/spnza_bricks_a_spec.tga", &x1, &y1, &comp1, 3);
+		unsigned char * specular = stbi_load("../../textures/spnza_bricks_a_spec.tga", &x1, &y1, &comp1, 4);
 
 		// Create Texture for the cube
 		glGenTextures(1, &m_Textures[0]);
 		glBindTexture(GL_TEXTURE_2D, m_Textures[0]);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, x, y, 0, GL_RGB, GL_UNSIGNED_BYTE, diffuse);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, x, y, 0, GL_RGBA, GL_UNSIGNED_BYTE, diffuse);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -107,7 +107,7 @@ namespace worldObject
 
 		glGenTextures(1, &m_Textures[1]);
 		glBindTexture(GL_TEXTURE_2D, m_Textures[1]);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, x1, y1, 0, GL_RGB, GL_UNSIGNED_BYTE, specular);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, x1, y1, 0, GL_RGBA, GL_UNSIGNED_BYTE, specular);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

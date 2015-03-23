@@ -77,6 +77,7 @@ namespace worldObject
 	/* ***************************************************** */
 		float * const getPositionAxisValue(int axis);
 		const glm::vec3& getPosition(void) const;
+		glm::vec3& getPosition(void);
 		void setPosition(const glm::vec3& p_vPosition);
 
 		const glm::mat4& getModelMatrix(void) const;
@@ -97,6 +98,7 @@ namespace worldObject
 
 	inline float * const Object3D::getPositionAxisValue(int axis) { return &m_vPosition[axis]; }
 	inline const glm::vec3& Object3D::getPosition(void) const { return m_vPosition; }
+	inline glm::vec3& Object3D::getPosition(void) { return m_vPosition; }
 	inline void Object3D::setPosition(const glm::vec3& p_vPosition) { m_vPosition = p_vPosition; updateMatrix(); }
 
 	inline const glm::mat4& Object3D::getModelMatrix(void) const { return m_mObjectModel; }

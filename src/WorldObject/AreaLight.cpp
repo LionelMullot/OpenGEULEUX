@@ -36,11 +36,11 @@ namespace worldObject
 	{
 		Light::init();
 
-		m_vPosition = glm::vec3(0, 2, 0);
-		m_vSize = glm::vec3(1, 1, 1);
+		m_vPosition = glm::vec3(1.2f, 7.7f, -2.9f);
+		m_vSize = glm::vec3(3.0f, 1, 1);
 
-		m_fDiffuseIntensity = 165.0f;
-		m_fSpecularIntensity = 10.0f;
+		m_fDiffuseIntensity = 150.0f;
+		m_fSpecularIntensity = 150.0f;
 		m_vColor = glm::vec3(1, 1, 1);
 
 		m_fAngleX = M_PI_2;
